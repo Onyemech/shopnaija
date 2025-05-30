@@ -8,6 +8,10 @@ import { AuthProvider } from "@/contexts/AuthContext";
 
 // Pages
 import Login from "./pages/Login";
+import Auth from "./pages/Auth";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import AuthCallback from "./pages/AuthCallback";
 import LandingPage from "./pages/LandingPage";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -49,7 +53,12 @@ const App = () => (
               } 
             />
 
+            {/* Authentication routes */}
             <Route path="/login" element={<Login />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
 
             {/* Super Admin Routes */}
             <Route

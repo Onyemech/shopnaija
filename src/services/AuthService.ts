@@ -29,10 +29,48 @@ export class AuthService {
     return data;
   }
 
+  static async signUpWithPhone(phone: string, password: string, userData: {
+    name: string;
+    role: 'customer';
+  }) {
+    const { data, error } = await supabase.auth.signUp({
+      phone,
+      password,
+      options: {
+        data: userData
+      }
+    });
+
+    if (error) throw error;
+    return data;
+  }
+
   static async signIn(email: string, password: string) {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
+    });
+
+    if (error) throw error;
+    return data;
+  }
+
+  static async signInWithPhone(phone: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      phone,
+      password
+    });
+
+    if (error) throw error;
+    return data;
+  }
+
+  static async signInWithOAuth(provider: 'google' | 'github' | 'twitter') {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`
+      }
     });
 
     if (error) throw error;
@@ -46,7 +84,7 @@ export class AuthService {
 
   static async resetPassword(email: string, redirectTo?: string) {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo
+      redirectTo: redirectTo || `${window.location.origin}/reset-password`
     });
 
     if (error) throw error;
@@ -55,6 +93,28 @@ export class AuthService {
 
   static async updatePassword(password: string) {
     const { data, error } = await supabase.auth.updateUser({ password });
+    if (error) throw error;
+    return data;
+  }
+
+  static async verifyOtp(email: string, token: string, type: 'signup' | 'recovery' | 'email_change') {
+    const { data, error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type
+    });
+
+    if (error) throw error;
+    return data;
+  }
+
+  static async verifyPhoneOtp(phone: string, token: string, type: 'sms') {
+    const { data, error } = await supabase.auth.verifyOtp({
+      phone,
+      token,
+      type
+    });
+
     if (error) throw error;
     return data;
   }
@@ -83,5 +143,24 @@ export class AuthService {
         callback(null);
       }
     });
+  }
+
+  static async resendConfirmation(email: string) {
+    const { data, error } = await supabase.auth.resend({
+      type: 'signup',
+      email
+    });
+
+    if (error) throw error;
+    return data;
+  }
+
+  static async updateUserMetadata(metadata: Partial<User>) {
+    const { data, error } = await supabase.auth.updateUser({
+      data: metadata
+    });
+
+    if (error) throw error;
+    return data;
   }
 }
