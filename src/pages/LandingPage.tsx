@@ -1,67 +1,49 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-
 const LandingPage = () => {
   const [email, setEmail] = useState("");
-  const { toast } = useToast();
-
-  const features = [
-    {
-      title: "Multi-Tenant Architecture",
-      description: "Each admin gets their own subdomain and customizable storefront with independent data.",
-      icon: (
-        <svg className="h-6 w-6 text-brand-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  const {
+    toast
+  } = useToast();
+  const features = [{
+    title: "Multi-Tenant Architecture",
+    description: "Each admin gets their own subdomain and customizable storefront with independent data.",
+    icon: <svg className="h-6 w-6 text-brand-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
-      ),
-    },
-    {
-      title: "Secure Payments",
-      description: "Integrated Paystack payment processing with automatic disbursements to admin accounts.",
-      icon: (
-        <svg className="h-6 w-6 text-brand-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  }, {
+    title: "Secure Payments",
+    description: "Integrated Paystack payment processing with automatic disbursements to admin accounts.",
+    icon: <svg className="h-6 w-6 text-brand-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
         </svg>
-      ),
-    },
-    {
-      title: "Full Customization",
-      description: "Admins can customize their storefronts with logos, colors, and branding elements.",
-      icon: (
-        <svg className="h-6 w-6 text-brand-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  }, {
+    title: "Full Customization",
+    description: "Admins can customize their storefronts with logos, colors, and branding elements.",
+    icon: <svg className="h-6 w-6 text-brand-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 11-4 0v-1a1 1 0 00-1-1H7a1 1 0 01-1-1v-3a1 1 0 011-1h1a2 2 0 100-4H7a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
         </svg>
-      ),
-    },
-    {
-      title: "Detailed Analytics",
-      description: "Comprehensive reporting and insights for both admins and superadmins.",
-      icon: (
-        <svg className="h-6 w-6 text-brand-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  }, {
+    title: "Detailed Analytics",
+    description: "Comprehensive reporting and insights for both admins and superadmins.",
+    icon: <svg className="h-6 w-6 text-brand-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
-      ),
-    },
-  ];
-
+  }];
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Here you would typically send the email to your newsletter API
     toast({
       title: "Thanks for subscribing!",
-      description: "We'll keep you updated on our platform.",
+      description: "We'll keep you updated on our platform."
     });
-    
     setEmail("");
   };
-
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       {/* Navigation */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -104,11 +86,7 @@ const LandingPage = () => {
             </div>
           </div>
           <div className="mt-10 lg:mt-0 lg:w-1/2">
-            <img 
-              src="https://via.placeholder.com/600x400?text=Platform+Preview" 
-              alt="Platform preview" 
-              className="w-full rounded-lg shadow-xl"
-            />
+            <img src="https://via.placeholder.com/600x400?text=Platform+Preview" alt="Platform preview" className="w-full rounded-lg shadow-xl" />
           </div>
         </div>
       </div>
@@ -128,8 +106,7 @@ const LandingPage = () => {
 
           <div className="mt-16">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-              {features.map((feature, index) => (
-                <div key={index} className="flex bg-white p-6 rounded-lg shadow-sm">
+              {features.map((feature, index) => <div key={index} className="flex bg-white p-6 rounded-lg shadow-sm">
                   <div className="flex-shrink-0">
                     <div className="flex items-center justify-center h-12 w-12 rounded-md bg-brand-100">
                       {feature.icon}
@@ -139,8 +116,7 @@ const LandingPage = () => {
                     <h3 className="text-lg leading-6 font-medium text-gray-900">{feature.title}</h3>
                     <p className="mt-2 text-base text-gray-500">{feature.description}</p>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </div>
@@ -162,7 +138,7 @@ const LandingPage = () => {
               </Link>
             </div>
             <div className="ml-3 inline-flex rounded-md shadow">
-              <Button size="lg" variant="outline" className="text-white border-white hover:bg-brand-700">
+              <Button size="lg" variant="outline" className="border-white hover:bg-brand-700 text-zinc-100">
                 Learn More
               </Button>
             </div>
@@ -181,14 +157,7 @@ const LandingPage = () => {
           </div>
           <div className="mt-8 max-w-md mx-auto">
             <form onSubmit={handleSubscribe} className="sm:flex">
-              <Input
-                type="email"
-                required
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-5 py-3 placeholder-gray-500 focus:ring-brand-500 focus:border-brand-500 border-gray-300 rounded-md"
-              />
+              <Input type="email" required placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-5 py-3 placeholder-gray-500 focus:ring-brand-500 focus:border-brand-500 border-gray-300 rounded-md" />
               <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0">
                 <Button type="submit" className="w-full bg-brand-800 hover:bg-brand-700">
                   Subscribe
@@ -231,8 +200,6 @@ const LandingPage = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default LandingPage;
