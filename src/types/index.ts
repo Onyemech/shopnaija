@@ -15,17 +15,19 @@ export interface User {
   location?: string;
   is_active: boolean;
   created_at?: string;
+  updated_at?: string;
 }
 
 export interface Product {
   id: string;
   admin_id: string;
   title: string;
-  description: string;
+  description?: string;
   price: number;
-  image_url: string;
-  location: string;
+  image_url?: string;
+  location?: string;
   created_at?: string;
+  updated_at?: string;
 }
 
 export interface Order {
@@ -39,6 +41,7 @@ export interface Order {
   payment_status: 'pending' | 'completed' | 'failed';
   payment_date?: string;
   created_at?: string;
+  updated_at?: string;
 }
 
 export interface Feedback {
@@ -46,15 +49,37 @@ export interface Feedback {
   admin_id: string;
   customer_name: string;
   rating: number;
-  comment: string;
+  comment?: string;
   date: string;
+  is_approved: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Notification {
   id: string;
   recipient_id: string;
   message: string;
-  type: string;
+  type: 'sale_notification' | 'admin_created' | 'admin_deactivated' | 'feedback_received' | 'order_failed' | 'payment_confirmed';
   timestamp: string;
   is_read: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CartItem {
+  product_id: string;
+  title: string;
+  price: number;
+  quantity: number;
+  image_url?: string;
+}
+
+export interface Cart {
+  id: string;
+  customer_email: string;
+  admin_id: string;
+  items: CartItem[];
+  created_at?: string;
+  updated_at?: string;
 }

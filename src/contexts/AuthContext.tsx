@@ -1,13 +1,14 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { User } from "@/types";
+import { AuthService } from "@/services/AuthService";
 
 interface AuthContextType {
   user: User | null;
   subdomain: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isSuperAdmin: boolean;
   isAdmin: boolean;
 }
@@ -27,75 +28,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     // Local development handling
     if (hostname === 'localhost') {
-      const subdomain = window.location.pathname.split('/')[1];
-      if (subdomain && subdomain !== '') {
-        setSubdomain(subdomain);
+      const path = window.location.pathname;
+      const pathSegments = path.split('/').filter(Boolean);
+      if (pathSegments.length > 0 && pathSegments[0] !== '') {
+        setSubdomain(pathSegments[0]);
       }
-      setLoading(false);
       return;
     }
     
-    // Production subdomain extraction
+    // Production subdomain extraction for .shopnaija.com
     const parts = hostname.split('.');
-    if (parts.length > 2) {
+    if (parts.length >= 3 && parts[1] === 'shopnaija') {
       setSubdomain(parts[0]);
     }
-    setLoading(false);
   }, []);
 
-  // Mock login function (will be replaced with Supabase Auth)
+  // Set up auth state listener
+  useEffect(() => {
+    setLoading(true);
+
+    const { data: { subscription } } = AuthService.onAuthStateChange((user) => {
+      setUser(user);
+      setIsSuperAdmin(user?.role === 'superadmin');
+      setIsAdmin(user?.role === 'admin');
+      setLoading(false);
+    });
+
+    // Check for existing session
+    AuthService.getCurrentUser().then((user) => {
+      setUser(user);
+      setIsSuperAdmin(user?.role === 'superadmin');
+      setIsAdmin(user?.role === 'admin');
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const login = async (email: string, password: string) => {
     setLoading(true);
-    
     try {
-      // This is a placeholder for Supabase auth
-      // const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-      
-      // Mock user data
-      const mockUser: User = {
-        id: '1',
-        name: email === 'admin@example.com' ? 'Admin User' : 'Super Admin',
-        email,
-        role: email === 'admin@example.com' ? 'admin' : 'superadmin',
-        subdomain: email === 'admin@example.com' ? 'admin1' : undefined,
-        website_name: email === 'admin@example.com' ? 'Admin Store' : 'Multi-Tenant Platform',
-        is_active: true,
-        logo_url: 'https://via.placeholder.com/150',
-      };
-      
-      setUser(mockUser);
-      setIsSuperAdmin(mockUser.role === 'superadmin');
-      setIsAdmin(mockUser.role === 'admin');
-      
-      localStorage.setItem('user', JSON.stringify(mockUser));
+      await AuthService.signIn(email, password);
+      // The auth state listener will handle updating the user state
     } catch (error) {
-      console.error('Login error:', error);
-      throw error;
-    } finally {
       setLoading(false);
+      throw error;
     }
   };
 
-  const logout = () => {
-    // This will be replaced with Supabase logout
-    // supabase.auth.signOut()
+  const logout = async () => {
+    await AuthService.signOut();
     setUser(null);
     setIsSuperAdmin(false);
     setIsAdmin(false);
-    localStorage.removeItem('user');
   };
-
-  // Check for stored user on mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser) as User;
-      setUser(parsedUser);
-      setIsSuperAdmin(parsedUser.role === 'superadmin');
-      setIsAdmin(parsedUser.role === 'admin');
-    }
-    setLoading(false);
-  }, []);
 
   const value = {
     user,
