@@ -20,7 +20,7 @@ export class AdminService {
   }) {
     try {
       // Create auth user with metadata
-      const { data, error } = await AuthService.signUp(
+      const authResult = await AuthService.signUp(
         adminData.email,
         adminData.password,
         {
@@ -39,8 +39,7 @@ export class AdminService {
         }
       );
 
-      if (error) throw error;
-      return data;
+      return authResult;
     } catch (error) {
       console.error('Error creating admin:', error);
       throw error;
@@ -80,7 +79,7 @@ export class AdminService {
       .select('*')
       .eq('subdomain', subdomain)
       .eq('role', 'admin')
-      .single();
+      .maybeSingle();
 
     if (error || !data) return null;
     return data;

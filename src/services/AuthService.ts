@@ -5,7 +5,7 @@ import { User } from "@/types";
 export class AuthService {
   static async signUp(email: string, password: string, userData: {
     name: string;
-    role: 'superadmin' | 'admin';
+    role: 'superadmin' | 'admin' | 'customer';
     subdomain?: string;
     website_name?: string;
     primary_color?: string;
@@ -68,7 +68,7 @@ export class AuthService {
       .from('users')
       .select('*')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (error || !profile) return null;
     return profile;

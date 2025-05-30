@@ -3,7 +3,9 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'superadmin' | 'admin';
+  password?: string;
+  phone?: string;
+  role: 'superadmin' | 'admin' | 'customer';
   subdomain?: string;
   logo_url?: string;
   website_name?: string;
@@ -11,9 +13,14 @@ export interface User {
   account_name?: string;
   account_number?: string;
   bank_name?: string;
-  phone?: string;
   location?: string;
+  nin?: string;
   is_active: boolean;
+  referral_code?: string;
+  referral_discount?: number;
+  referred_by?: string;
+  email_verified?: boolean;
+  phone_verified?: boolean;
   created_at?: string;
   updated_at?: string;
 }
@@ -21,10 +28,15 @@ export interface User {
 export interface Product {
   id: string;
   admin_id: string;
+  category_id?: string;
   title: string;
   description?: string;
   price: number;
+  adjusted_price?: number;
+  paystack_fee?: number;
+  superadmin_fee?: number;
   image_url?: string;
+  image_public_id?: string;
   location?: string;
   created_at?: string;
   updated_at?: string;
@@ -33,6 +45,7 @@ export interface Product {
 export interface Order {
   id: string;
   admin_id: string;
+  customer_id?: string;
   customer_name: string;
   customer_email: string;
   customer_phone: string;
@@ -40,6 +53,9 @@ export interface Order {
   total_amount: number;
   payment_status: 'pending' | 'completed' | 'failed';
   payment_date?: string;
+  tracking_status?: 'processing' | 'shipped' | 'out for delivery' | 'delivered' | 'cancelled';
+  order_reference?: string;
+  verification_code?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -47,11 +63,14 @@ export interface Order {
 export interface Feedback {
   id: string;
   admin_id: string;
+  customer_id?: string;
+  product_id?: string;
   customer_name: string;
   rating: number;
   comment?: string;
-  date: string;
+  date?: string;
   is_approved: boolean;
+  is_review?: boolean;
   created_at?: string;
   updated_at?: string;
 }
@@ -77,9 +96,17 @@ export interface CartItem {
 
 export interface Cart {
   id: string;
-  customer_email: string;
+  customer_id?: string;
   admin_id: string;
   items: CartItem[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Category {
+  id: string;
+  admin_id?: string;
+  name: string;
   created_at?: string;
   updated_at?: string;
 }
