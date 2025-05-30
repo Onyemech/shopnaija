@@ -138,7 +138,7 @@ const LandingPage = () => {
               </Link>
             </div>
             <div className="ml-3 inline-flex rounded-md shadow">
-              <Button size="lg" variant="outline" className="border-white hover:bg-brand-700 text-zinc-100">
+              <Button size="lg" variant="outline" className="border-white hover:bg-brand-700 text-zinc-300 text-base">
                 Learn More
               </Button>
             </div>
