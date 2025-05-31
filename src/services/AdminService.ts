@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface AdminCreateData {
@@ -14,6 +13,7 @@ export interface AdminCreateData {
   bank_name?: string;
   logo_url?: string;
   is_active?: boolean;
+  referral_code?: string;
 }
 
 export class AdminService {
