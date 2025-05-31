@@ -82,6 +82,28 @@ const App = () => (
             }
           />
 
+          <Route
+            path="/admin/products"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <DashboardLayout>
+                  <AdminDashboard />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/settings"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <DashboardLayout>
+                  <AdminDashboard />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
           {/* 404 fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>
