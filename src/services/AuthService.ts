@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types";
 
@@ -16,17 +15,46 @@ export class AuthService {
     bank_name?: string;
     logo_url?: string;
     is_active?: boolean;
+    nin?: string;
   }) {
+    // Validate NIN for admin users
+    if (userData.role === 'admin' && userData.nin) {
+      const ninValidation = await this.validateNIN(userData.nin);
+      if (!ninValidation.valid) {
+        throw new Error(ninValidation.error || "Invalid NIN format");
+      }
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: userData
+        data: userData,
+        emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     });
 
     if (error) throw error;
     return data;
+  }
+
+  static async validateNIN(nin: string): Promise<{ valid: boolean; error?: string }> {
+    try {
+      const { data, error } = await supabase.functions.invoke('validate-nin', {
+        body: { nin }
+      });
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('NIN validation error:', error);
+      // Fallback validation
+      const ninRegex = /^\d{11}$/;
+      return {
+        valid: ninRegex.test(nin.replace(/[\s-]/g, '')),
+        error: ninRegex.test(nin.replace(/[\s-]/g, '')) ? undefined : "Please enter a valid 11-digit NIN"
+      };
+    }
   }
 
   static async signUpWithPhone(phone: string, password: string, userData: {
@@ -69,7 +97,11 @@ export class AuthService {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       }
     });
 
@@ -136,8 +168,11 @@ export class AuthService {
 
   static onAuthStateChange(callback: (user: User | null) => void) {
     return supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session?.user?.id);
+      
       if (session?.user) {
         const user = await this.getCurrentUser();
+        console.log('Retrieved user profile:', user);
         callback(user);
       } else {
         callback(null);

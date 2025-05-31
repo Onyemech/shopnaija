@@ -22,6 +22,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
+  const [nin, setNin] = useState("");
   
   const { subdomain } = useAuth();
   const navigate = useNavigate();
@@ -29,6 +30,12 @@ const Auth = () => {
 
   const isAdminSubdomain = subdomain && subdomain !== 'superadmin';
   const isSuperAdminSubdomain = subdomain === 'superadmin';
+
+  const validateNIN = (ninValue: string): boolean => {
+    // Nigerian NIN validation: 11 digits
+    const ninRegex = /^\d{11}$/;
+    return ninRegex.test(ninValue);
+  };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,14 +48,7 @@ const Auth = () => {
         description: "Welcome back!",
       });
       
-      // Redirect based on user role and subdomain
-      if (isSuperAdminSubdomain) {
-        navigate("/dashboard");
-      } else if (isAdminSubdomain) {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/");
-      }
+      // Redirect will be handled by AuthCallback component
     } catch (error: any) {
       console.error("Login error:", error);
       toast({
@@ -71,7 +71,6 @@ const Auth = () => {
         title: "Login successful",
         description: "Welcome back!",
       });
-      navigate("/");
     } catch (error: any) {
       console.error("Phone login error:", error);
       toast({
@@ -96,13 +95,27 @@ const Auth = () => {
       return;
     }
 
+    // Validate NIN for admin signups
+    if ((isSuperAdminSubdomain || isAdminSubdomain) && !validateNIN(nin)) {
+      toast({
+        title: "Invalid NIN",
+        description: "Please enter a valid 11-digit Nigerian National Identification Number",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      await AuthService.signUp(email, password, {
+      const userData = {
         name,
-        role: 'customer'
-      });
+        role: (isSuperAdminSubdomain || isAdminSubdomain) ? 'admin' as const : 'customer' as const,
+        ...(nin && { nin }),
+        ...(subdomain && { subdomain }),
+      };
+
+      await AuthService.signUp(email, password, userData);
       
       toast({
         title: "Account created",
@@ -179,13 +192,13 @@ const Auth = () => {
 
   const getBrandingTitle = () => {
     if (isSuperAdminSubdomain) return "GrowthSmallBeez Admin";
-    if (isAdminSubdomain) return `${subdomain} Store`;
+    if (isAdminSubdomain) return `${subdomain} Admin Portal`;
     return "GrowthSmallBeez";
   };
 
   const getBrandingDescription = () => {
     if (isSuperAdminSubdomain) return "Super Admin Portal";
-    if (isAdminSubdomain) return "Admin Dashboard";
+    if (isAdminSubdomain) return "Admin Dashboard Access";
     return "Your Nigerian E-commerce Platform";
   };
 
@@ -194,7 +207,7 @@ const Auth = () => {
       <div className="w-full max-w-md">
         <Card className="shadow-lg">
           <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold text-brand-800">
+            <CardTitle className="text-2xl font-bold text-green-600">
               {getBrandingTitle()}
             </CardTitle>
             <CardDescription>
@@ -213,7 +226,7 @@ const Auth = () => {
                 {(isSuperAdminSubdomain || isAdminSubdomain) && (
                   <div className="space-y-3">
                     <div className="text-center text-sm text-gray-600 mb-4">
-                      Admin Login - Use social accounts only
+                      Admin Login - Social accounts or email/phone
                     </div>
                     <Button
                       type="button"
@@ -235,161 +248,185 @@ const Auth = () => {
                       <Github className="mr-2 h-4 w-4" />
                       Continue with GitHub
                     </Button>
+                    
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                      </div>
+                    </div>
                   </div>
                 )}
 
-                {/* Customer Login Options */}
-                {!isSuperAdminSubdomain && !isAdminSubdomain && (
-                  <>
-                    <Tabs value={loginMethod} onValueChange={(value) => setLoginMethod(value as 'email' | 'phone')}>
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="email">Email</TabsTrigger>
-                        <TabsTrigger value="phone">Phone</TabsTrigger>
-                      </TabsList>
+                {/* Email/Phone Login for all users */}
+                <Tabs value={loginMethod} onValueChange={(value) => setLoginMethod(value as 'email' | 'phone')}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="email">Email</TabsTrigger>
+                    <TabsTrigger value="phone">Phone</TabsTrigger>
+                  </TabsList>
 
-                      <TabsContent value="email">
-                        <form onSubmit={handleEmailLogin} className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                              id="email"
-                              type="email"
-                              placeholder="email@example.com"
-                              required
-                              value={email}
-                              onChange={(e) => setEmail(e.target.value)}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                              id="password"
-                              type="password"
-                              placeholder="••••••••"
-                              required
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
-                            />
-                          </div>
-                          <Button
-                            type="submit"
-                            className="w-full bg-brand-800 hover:bg-brand-700"
-                            disabled={isLoading}
-                          >
-                            {isLoading ? "Logging in..." : "Login with Email"}
-                          </Button>
-                        </form>
-                      </TabsContent>
+                  <TabsContent value="email">
+                    <form onSubmit={handleEmailLogin} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="email@example.com"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                          id="password"
+                          type="password"
+                          placeholder="••••••••"
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
+                      </div>
+                      <Button
+                        type="submit"
+                        className="w-full bg-green-600 hover:bg-green-700"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? "Logging in..." : "Login with Email"}
+                      </Button>
+                    </form>
+                  </TabsContent>
 
-                      <TabsContent value="phone">
-                        <form onSubmit={handlePhoneLogin} className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="phone">Phone Number</Label>
-                            <Input
-                              id="phone"
-                              type="tel"
-                              placeholder="+234XXXXXXXXXX"
-                              required
-                              value={phone}
-                              onChange={(e) => setPhone(e.target.value)}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="password-phone">Password</Label>
-                            <Input
-                              id="password-phone"
-                              type="password"
-                              placeholder="••••••••"
-                              required
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
-                            />
-                          </div>
-                          <Button
-                            type="submit"
-                            className="w-full bg-brand-800 hover:bg-brand-700"
-                            disabled={isLoading}
-                          >
-                            {isLoading ? "Logging in..." : "Login with Phone"}
-                          </Button>
-                        </form>
-                      </TabsContent>
-                    </Tabs>
-                  </>
-                )}
+                  <TabsContent value="phone">
+                    <form onSubmit={handlePhoneLogin} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          placeholder="+234XXXXXXXXXX"
+                          required
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="password-phone">Password</Label>
+                        <Input
+                          id="password-phone"
+                          type="password"
+                          placeholder="••••••••"
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
+                      </div>
+                      <Button
+                        type="submit"
+                        className="w-full bg-green-600 hover:bg-green-700"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? "Logging in..." : "Login with Phone"}
+                      </Button>
+                    </form>
+                  </TabsContent>
+                </Tabs>
               </TabsContent>
 
               <TabsContent value="signup" className="space-y-4">
                 {(isSuperAdminSubdomain || isAdminSubdomain) && (
-                  <div className="text-center text-sm text-gray-600">
-                    Admin accounts are created by super admins only.
+                  <div className="text-center text-sm text-blue-600 mb-4 p-3 bg-blue-50 rounded-md">
+                    Admin Registration - All fields including NIN are required
                   </div>
                 )}
 
-                {!isSuperAdminSubdomain && !isAdminSubdomain && (
-                  <Tabs value={loginMethod} onValueChange={(value) => setLoginMethod(value as 'email' | 'phone')}>
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="email">Email</TabsTrigger>
-                      <TabsTrigger value="phone">Phone</TabsTrigger>
-                    </TabsList>
+                <Tabs value={loginMethod} onValueChange={(value) => setLoginMethod(value as 'email' | 'phone')}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="email">Email</TabsTrigger>
+                    <TabsTrigger value="phone">Phone</TabsTrigger>
+                  </TabsList>
 
-                    <TabsContent value="email">
-                      <form onSubmit={handleEmailSignup} className="space-y-4">
+                  <TabsContent value="email">
+                    <form onSubmit={handleEmailSignup} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-name">Full Name *</Label>
+                        <Input
+                          id="signup-name"
+                          type="text"
+                          placeholder="Your full name"
+                          required
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                        />
+                      </div>
+                      
+                      {(isSuperAdminSubdomain || isAdminSubdomain) && (
                         <div className="space-y-2">
-                          <Label htmlFor="signup-name">Full Name</Label>
+                          <Label htmlFor="nin">NIN (Nigerian National ID) *</Label>
                           <Input
-                            id="signup-name"
+                            id="nin"
                             type="text"
-                            placeholder="Your full name"
+                            placeholder="12345678901 (11 digits)"
                             required
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            maxLength={11}
+                            value={nin}
+                            onChange={(e) => setNin(e.target.value.replace(/\D/g, ''))}
                           />
+                          <p className="text-xs text-gray-500">
+                            Enter your 11-digit Nigerian National Identification Number
+                          </p>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="signup-email">Email</Label>
-                          <Input
-                            id="signup-email"
-                            type="email"
-                            placeholder="email@example.com"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="signup-password">Password</Label>
-                          <Input
-                            id="signup-password"
-                            type="password"
-                            placeholder="••••••••"
-                            required
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="confirm-password">Confirm Password</Label>
-                          <Input
-                            id="confirm-password"
-                            type="password"
-                            placeholder="••••••••"
-                            required
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                          />
-                        </div>
-                        <Button
-                          type="submit"
-                          className="w-full bg-brand-800 hover:bg-brand-700"
-                          disabled={isLoading}
-                        >
-                          {isLoading ? "Creating account..." : "Create Account"}
-                        </Button>
-                      </form>
-                    </TabsContent>
+                      )}
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-email">Email *</Label>
+                        <Input
+                          id="signup-email"
+                          type="email"
+                          placeholder="email@example.com"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-password">Password *</Label>
+                        <Input
+                          id="signup-password"
+                          type="password"
+                          placeholder="••••••••"
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirm-password">Confirm Password *</Label>
+                        <Input
+                          id="confirm-password"
+                          type="password"
+                          placeholder="••••••••"
+                          required
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                      </div>
+                      <Button
+                        type="submit"
+                        className="w-full bg-green-600 hover:bg-green-700"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? "Creating account..." : "Create Account"}
+                      </Button>
+                    </form>
+                  </TabsContent>
 
-                    <TabsContent value="phone">
+                  <TabsContent value="phone">
+                    {!isSuperAdminSubdomain && !isAdminSubdomain && (
                       <form onSubmit={handlePhoneSignup} className="space-y-4">
                         <div className="space-y-2">
                           <Label htmlFor="signup-name-phone">Full Name</Label>
@@ -437,21 +474,28 @@ const Auth = () => {
                         </div>
                         <Button
                           type="submit"
-                          className="w-full bg-brand-800 hover:bg-brand-700"
+                          className="w-full bg-green-600 hover:bg-green-700"
                           disabled={isLoading}
                         >
                           {isLoading ? "Creating account..." : "Create Account"}
                         </Button>
                       </form>
-                    </TabsContent>
-                  </Tabs>
-                )}
+                    )}
+                    
+                    {(isSuperAdminSubdomain || isAdminSubdomain) && (
+                      <div className="text-center text-sm text-gray-600 p-4">
+                        Admin registration requires email signup with NIN verification.
+                        Please use the Email tab above.
+                      </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
               </TabsContent>
             </Tabs>
           </CardContent>
           <CardFooter className="text-center text-sm text-gray-600">
             <div className="w-full">
-              <a href="/forgot-password" className="text-brand-800 hover:underline">
+              <a href="/forgot-password" className="text-green-600 hover:underline">
                 Forgot your password?
               </a>
             </div>
