@@ -15,7 +15,6 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [loginMethod, setLoginMethod] = useState<'email' | 'phone'>('email');
-  const [userType, setUserType] = useState<'customer' | 'admin'>('customer');
   
   // Form states
   const [email, setEmail] = useState("");
@@ -179,15 +178,15 @@ const Auth = () => {
   };
 
   const getBrandingTitle = () => {
-    if (isSuperAdminSubdomain) return "ShopNaija Admin";
+    if (isSuperAdminSubdomain) return "GrowthSmallBeez Admin";
     if (isAdminSubdomain) return `${subdomain} Store`;
-    return "ShopNaija";
+    return "GrowthSmallBeez";
   };
 
   const getBrandingDescription = () => {
     if (isSuperAdminSubdomain) return "Super Admin Portal";
     if (isAdminSubdomain) return "Admin Dashboard";
-    return "Your Nigerian Marketplace";
+    return "Your Nigerian E-commerce Platform";
   };
 
   return (

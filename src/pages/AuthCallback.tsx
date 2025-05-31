@@ -18,7 +18,7 @@ const AuthCallback = () => {
           if (user) {
             toast({
               title: "Login successful",
-              description: "Welcome to ShopNaija!",
+              description: "Welcome to GrowthSmallBeez!",
             });
 
             // Redirect based on user role and subdomain

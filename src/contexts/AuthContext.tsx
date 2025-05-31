@@ -36,9 +36,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    // Production subdomain extraction for .shopnaija.com
+    // Production subdomain extraction for .growthsmallbeez.com
     const parts = hostname.split('.');
-    if (parts.length >= 3 && parts[1] === 'shopnaija') {
+    if (parts.length >= 3 && parts[1] === 'growthsmallbeez') {
       setSubdomain(parts[0]);
     }
   }, []);
