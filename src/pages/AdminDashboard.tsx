@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -129,7 +130,7 @@ const AdminDashboard = () => {
             <span className="hidden sm:inline">Products</span>
           </TabsTrigger>
           <TabsTrigger value="categories" className="flex items-center gap-2">
-            <Category className="h-4 w-4" />
+            <Tag className="h-4 w-4" />
             <span className="hidden sm:inline">Categories</span>
           </TabsTrigger>
           <TabsTrigger value="orders" className="flex items-center gap-2">
