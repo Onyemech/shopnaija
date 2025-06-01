@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { CategoryService } from "@/services/CategoryService";
@@ -8,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash, Category as CategoryIcon } from "lucide-react";
+import { Plus, Edit, Trash, Tag } from "lucide-react";
 import { Category } from "@/types";
 
 const CategoryManagement = () => {
@@ -171,7 +170,7 @@ const CategoryManagement = () => {
         {categories.length === 0 ? (
           <Card className="col-span-full">
             <CardContent className="flex flex-col items-center justify-center py-8">
-              <CategoryIcon className="h-12 w-12 text-gray-400 mb-4" />
+              <Tag className="h-12 w-12 text-gray-400 mb-4" />
               <p className="text-gray-500">No categories yet</p>
               <p className="text-sm text-gray-400">Click "Add Category" to get started</p>
             </CardContent>
