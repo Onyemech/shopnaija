@@ -14,6 +14,7 @@ import AuthCallback from "./pages/AuthCallback";
 import LandingPage from "./pages/LandingPage";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import StoreFront from "./pages/StoreFront";
 import NotFound from "./pages/NotFound";
 
 // Components
@@ -38,18 +39,13 @@ const App = () => (
                 // Root domain or superadmin subdomain shows landing page
                 children={<LandingPage />} 
                 // Admin subdomains show store frontend
-                adminContent={
-                  <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                    <div className="text-center">
-                      <h1 className="text-4xl font-bold text-brand-800 mb-4">GrowthSmallBeez Store</h1>
-                      <p className="text-xl text-gray-600 mb-8">Welcome to our store!</p>
-                      <p className="text-gray-500">Store frontend coming soon...</p>
-                    </div>
-                  </div>
-                } 
+                adminContent={<StoreFront />} 
               />
             } 
           />
+
+          {/* Store front for specific subdomains */}
+          <Route path="/:subdomain" element={<StoreFront />} />
 
           {/* Authentication routes */}
           <Route path="/login" element={<Login />} />

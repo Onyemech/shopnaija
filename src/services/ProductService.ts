@@ -1,12 +1,39 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Product } from "@/types";
 
 export class ProductService {
-  static async createProduct(productData: Omit<Product, 'id' | 'created_at' | 'updated_at'>) {
+  static async getProductsByAdmin(adminId: string) {
     const { data, error } = await supabase
       .from('products')
-      .insert(productData)
+      .select(`
+        *,
+        categories (
+          id,
+          name
+        )
+      `)
+      .eq('admin_id', adminId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+  }
+
+  static async getCategoriesByAdmin(adminId: string) {
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .eq('admin_id', adminId)
+      .order('name');
+
+    if (error) throw error;
+    return data;
+  }
+
+  static async createProduct(productData: any) {
+    const { data, error } = await supabase
+      .from('products')
+      .insert([productData])
       .select()
       .single();
 
@@ -14,33 +41,10 @@ export class ProductService {
     return data;
   }
 
-  static async getProductsByAdmin(adminId: string): Promise<Product[]> {
+  static async updateProduct(id: string, productData: any) {
     const { data, error } = await supabase
       .from('products')
-      .select('*')
-      .eq('admin_id', adminId)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data || [];
-  }
-
-  static async getPublicProductsByAdmin(adminId: string): Promise<Product[]> {
-    // This will use the RLS policy to only show products from active admins
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('admin_id', adminId)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data || [];
-  }
-
-  static async updateProduct(id: string, updates: Partial<Product>) {
-    const { data, error } = await supabase
-      .from('products')
-      .update(updates)
+      .update(productData)
       .eq('id', id)
       .select()
       .single();
@@ -58,14 +62,35 @@ export class ProductService {
     if (error) throw error;
   }
 
-  static async getProduct(id: string): Promise<Product | null> {
+  static async createCategory(categoryData: any) {
     const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('id', id)
+      .from('categories')
+      .insert([categoryData])
+      .select()
       .single();
 
-    if (error || !data) return null;
+    if (error) throw error;
     return data;
+  }
+
+  static async updateCategory(id: string, categoryData: any) {
+    const { data, error } = await supabase
+      .from('categories')
+      .update(categoryData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  static async deleteCategory(id: string) {
+    const { error } = await supabase
+      .from('categories')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
   }
 }

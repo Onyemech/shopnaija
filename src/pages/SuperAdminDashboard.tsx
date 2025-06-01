@@ -2,61 +2,35 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Users, 
-  Package, 
-  ShoppingBag, 
   MessageCircle, 
   Bell, 
   UserPlus,
   TrendingUp,
-  DollarSign
+  BarChart3
 } from "lucide-react";
 import AdminManagement from "@/components/superadmin/AdminManagement";
 import FeedbackManagement from "@/components/superadmin/FeedbackManagement";
 import NotificationCenter from "@/components/superadmin/NotificationCenter";
 import ReferralTracking from "@/components/superadmin/ReferralTracking";
+import DashboardStats from "@/components/superadmin/DashboardStats";
+import RecentActivity from "@/components/superadmin/RecentActivity";
+import TopPerformingStores from "@/components/superadmin/TopPerformingStores";
 
 const SuperAdminDashboard = () => {
   const { user } = useAuth();
 
   // Mock stats - in real app, these would come from API
-  const stats = [
-    {
-      title: "Total Admins",
-      value: 12,
-      icon: <Users className="h-8 w-8 text-brand-800" />,
-      description: "Active store owners",
-      change: "+2 this month",
-      trend: "up"
-    },
-    {
-      title: "Total Revenue",
-      value: "₦2,450,000",
-      icon: <DollarSign className="h-8 w-8 text-green-600" />,
-      description: "This month",
-      change: "+15% from last month",
-      trend: "up"
-    },
-    {
-      title: "Total Products",
-      value: 1240,
-      icon: <Package className="h-8 w-8 text-blue-600" />,
-      description: "Across all stores",
-      change: "+180 this week",
-      trend: "up"
-    },
-    {
-      title: "Total Orders",
-      value: 456,
-      icon: <ShoppingBag className="h-8 w-8 text-purple-600" />,
-      description: "Completed orders",
-      change: "+23 today",
-      trend: "up"
-    }
-  ];
+  const stats = {
+    totalAdmins: 12,
+    totalRevenue: 2450000,
+    totalProducts: 1240,
+    totalOrders: 456,
+    activeStores: 10,
+    monthlyGrowth: 15.2
+  };
 
   return (
     <div className="p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
@@ -78,52 +52,43 @@ const SuperAdminDashboard = () => {
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat, i) => (
-          <Card key={i} className="hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {stat.title}
-              </CardTitle>
-              {stat.icon}
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">{stat.description}</p>
-              <div className="mt-2 flex items-center text-xs">
-                <TrendingUp className="h-3 w-3 text-green-600 mr-1" />
-                <span className="font-medium text-green-600">{stat.change}</span>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
       {/* Main Content Tabs */}
-      <Tabs defaultValue="admins" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="overview" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            <span className="hidden sm:inline">Overview</span>
+          </TabsTrigger>
           <TabsTrigger value="admins" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            <span className="hidden sm:inline">Admin Management</span>
-            <span className="sm:hidden">Admins</span>
+            <span className="hidden sm:inline">Admins</span>
           </TabsTrigger>
           <TabsTrigger value="referrals" className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
-            <span className="hidden sm:inline">Referral Tracking</span>
-            <span className="sm:hidden">Referrals</span>
+            <span className="hidden sm:inline">Referrals</span>
           </TabsTrigger>
           <TabsTrigger value="feedback" className="flex items-center gap-2">
             <MessageCircle className="h-4 w-4" />
             <span className="hidden sm:inline">Feedback</span>
-            <span className="sm:hidden">Feedback</span>
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
-            <span className="hidden sm:inline">Notifications</span>
-            <span className="sm:hidden">Alerts</span>
+            <span className="hidden sm:inline">Alerts</span>
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="overview">
+          <div className="space-y-6">
+            {/* Stats Grid */}
+            <DashboardStats stats={stats} />
+            
+            {/* Recent Activity and Top Stores */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              <RecentActivity />
+              <TopPerformingStores />
+            </div>
+          </div>
+        </TabsContent>
 
         <TabsContent value="admins">
           <AdminManagement />
