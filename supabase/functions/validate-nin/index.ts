@@ -6,74 +6,42 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-interface NINRequest {
-  nin: string;
-}
-
-interface NINResponse {
-  valid: boolean;
-  error?: string;
-}
-
-function validateNIN(nin: string): { valid: boolean; error?: string } {
-  // Remove any spaces or dashes
-  const cleanNIN = nin.replace(/[\s-]/g, '');
-  
-  // Check if it's exactly 11 digits
-  if (!/^\d{11}$/.test(cleanNIN)) {
-    return {
-      valid: false,
-      error: "NIN must be exactly 11 digits"
-    };
-  }
-  
-  // Additional validation could be added here
-  // For now, we just check the format
-  
-  return { valid: true };
-}
-
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const { nin }: NINRequest = await req.json();
-    
-    if (!nin) {
+    const { nin } = await req.json()
+
+    // Nigerian NIN validation: 11 digits
+    const ninRegex = /^\d{11}$/
+    const cleanNin = nin.replace(/[\s-]/g, '')
+
+    const isValid = ninRegex.test(cleanNin)
+
+    if (!isValid) {
       return new Response(
-        JSON.stringify({ valid: false, error: "NIN is required" }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400 
-        }
-      );
+        JSON.stringify({ 
+          valid: false, 
+          error: 'Invalid NIN: Must be an 11-digit number' 
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
-    const validationResult = validateNIN(nin);
-    
     return new Response(
-      JSON.stringify(validationResult),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: validationResult.valid ? 200 : 400
-      }
-    );
-    
+      JSON.stringify({ valid: true }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   } catch (error) {
-    console.error('NIN validation error:', error);
-    
+    console.error('Error in validate-nin:', error)
     return new Response(
       JSON.stringify({ 
         valid: false, 
-        error: "Internal server error during NIN validation" 
+        error: 'Please enter a valid 11-digit NIN' 
       }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
-      }
-    );
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   }
 })
