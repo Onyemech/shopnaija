@@ -148,11 +148,7 @@ const LandingPage = () => {
                     value={emailOrPhone}
                     onChange={(e) => setEmailOrPhone(e.target.value)}
                     required
-                    className="h-12 text-base border-gray-300"
-                    style={{ 
-                      focusBorderColor: '#00A862',
-                      '--tw-ring-color': '#00A862'
-                    }}
+                    className="h-12 text-base border-gray-300 focus:border-green-600 focus:ring-green-600"
                   />
                 </div>
                 <div className="space-y-2">
@@ -166,11 +162,7 @@ const LandingPage = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="h-12 text-base border-gray-300"
-                    style={{ 
-                      focusBorderColor: '#00A862',
-                      '--tw-ring-color': '#00A862'
-                    }}
+                    className="h-12 text-base border-gray-300 focus:border-green-600 focus:ring-green-600"
                   />
                 </div>
                 <Button
