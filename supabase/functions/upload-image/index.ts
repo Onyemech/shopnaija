@@ -12,48 +12,45 @@ serve(async (req) => {
   }
 
   try {
-    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${Deno.env.get('CLOUDINARY_CLOUD_NAME')}/image/upload`
     const formData = await req.formData()
-    
     const file = formData.get('file') as File
+    
     if (!file) {
       throw new Error('No file provided')
     }
 
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
-    if (!allowedTypes.includes(file.type)) {
-      throw new Error('Invalid file type. Only JPEG and PNG are allowed.')
-    }
+    // Convert file to base64
+    const bytes = await file.arrayBuffer()
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(bytes)))
+    const dataUrl = `data:${file.type};base64,${base64}`
 
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024
-    if (file.size > maxSize) {
-      throw new Error('File too large. Maximum size is 5MB.')
-    }
+    // Upload to Cloudinary
+    const cloudinaryData = new FormData()
+    cloudinaryData.append('file', dataUrl)
+    cloudinaryData.append('upload_preset', 'shopnaija_preset') // You'll need to create this preset
+    cloudinaryData.append('cloud_name', Deno.env.get('CLOUDINARY_CLOUD_NAME') || 'dkogzpxhn')
 
-    // Prepare upload data
-    const uploadData = new FormData()
-    uploadData.append('file', file)
-    uploadData.append('upload_preset', Deno.env.get('CLOUDINARY_UPLOAD_PRESET') || 'unsigned_preset')
-    uploadData.append('transformation', 'c_fit,w_800,h_600')
+    const cloudinaryResponse = await fetch(
+      `https://api.cloudinary.com/v1_1/${Deno.env.get('CLOUDINARY_CLOUD_NAME') || 'dkogzpxhn'}/image/upload`,
+      {
+        method: 'POST',
+        body: cloudinaryData,
+      }
+    )
 
-    const response = await fetch(cloudinaryUrl, {
-      method: 'POST',
-      body: uploadData
-    })
+    const result = await cloudinaryResponse.json()
 
-    const result = await response.json()
-
-    if (!response.ok) {
+    if (!cloudinaryResponse.ok) {
       throw new Error(result.error?.message || 'Upload failed')
     }
 
     return new Response(
       JSON.stringify({
-        image_url: result.secure_url,
-        image_public_id: result.public_id,
-        thumbnail_url: result.secure_url.replace('/upload/', '/upload/c_thumb,w_300,h_300/')
+        url: result.secure_url,
+        public_id: result.public_id,
+        format: result.format,
+        width: result.width,
+        height: result.height
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

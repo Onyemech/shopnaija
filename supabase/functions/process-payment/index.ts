@@ -18,7 +18,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { order_id, email, amount, admin_id } = await req.json()
+    const { order_id, email, amount, admin_id, customer_name, customer_phone } = await req.json()
 
     // Get admin details
     const { data: admin, error: adminError } = await supabase
@@ -32,33 +32,57 @@ serve(async (req) => {
     }
 
     // Generate unique order reference
-    const orderReference = `GSB-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+    const orderReference = `SN-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
 
+    // Calculate admin commission (95% goes to admin, 5% to platform)
+    const adminAmount = Math.floor(amount * 0.95)
+    
     // Initialize Paystack payment
     const paystackResponse = await fetch('https://api.paystack.co/transaction/initialize', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('PAYSTACK_SECRET_KEY')}`,
+        'Authorization': `Bearer ${Deno.env.get('PAYSTACK_LIVE_SECRET_KEY')}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         email,
         amount: amount * 100, // Convert to kobo
         reference: orderReference,
-        callback_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/verify-payment`,
+        callback_url: `https://www.shopnaija.com/payment-success?reference=${orderReference}`,
+        webhook_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/paystack-webhook`,
         metadata: {
           order_id,
           admin_id,
+          customer_name,
+          customer_phone,
+          admin_phone: admin.phone,
+          website_name: admin.website_name,
           custom_fields: [
             {
               display_name: "Order Reference",
               variable_name: "order_reference",
               value: orderReference
+            },
+            {
+              display_name: "Store Name",
+              variable_name: "store_name", 
+              value: admin.website_name
             }
           ]
         },
-        subaccount: admin.is_active && admin.account_number ? admin.account_number : undefined,
-        bearer: 'account'
+        // Split payment - 95% to admin, 5% to platform
+        split: {
+          type: "percentage",
+          currency: "NGN",
+          subaccounts: admin.account_number ? [
+            {
+              subaccount: admin.account_number,
+              share: 95
+            }
+          ] : [],
+          bearer_type: "all",
+          bearer_subaccount: admin.account_number || undefined
+        }
       })
     })
 
@@ -73,7 +97,11 @@ serve(async (req) => {
       .from('orders')
       .update({
         order_reference: orderReference,
-        payment_status: 'pending'
+        payment_status: 'pending',
+        customer_name,
+        customer_email: email,
+        customer_phone,
+        total_amount: amount
       })
       .eq('id', order_id)
 
@@ -81,7 +109,10 @@ serve(async (req) => {
       JSON.stringify({
         authorization_url: paystackData.data.authorization_url,
         access_code: paystackData.data.access_code,
-        reference: orderReference
+        reference: orderReference,
+        redirect_url: `https://wa.me/${admin.phone}?text=${encodeURIComponent(
+          `Hello! I just completed payment for order ${orderReference} worth ₦${amount.toLocaleString()}. Please confirm and prepare my items for delivery. Customer: ${customer_name}, Phone: ${customer_phone}`
+        )}`
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

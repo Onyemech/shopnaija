@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { CheckCircle, Users, ShoppingBag, TrendingUp, Star, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,7 @@ const LandingPage = () => {
 
   const handleGetStarted = () => {
     const whatsappMessage = encodeURIComponent(
-      "Hello! I want to register as an admin on GrowthSmallBeez. Please help me set up my store with the following details: Name, Phone, Email, NIN, Account Name, Account Number, Bank Name, Website Name, and Subdomain."
+      "Hello! I want to register as an admin on ShopNaija. I'm interested in the ₦75,000 annual plan with the massive discount. Please help me set up my store with the following details: Name, Phone, Email, NIN, Account Name, Account Number, Bank Name, Website Name, and Subdomain."
     );
     window.open(`https://wa.me/+2348158025887?text=${whatsappMessage}`, '_blank');
   };
@@ -42,10 +43,10 @@ const LandingPage = () => {
     
     switch (item) {
       case "Features":
-        message = "GrowthSmallBeez offers beautiful online stores, sales analytics, and customer management tools to help Nigerian entrepreneurs succeed online.";
+        message = "ShopNaija offers beautiful online stores, sales analytics, and customer management tools to help Nigerian entrepreneurs succeed online.";
         break;
       case "Pricing":
-        message = "GrowthSmallBeez is free to start! We only charge a small fee when you make sales. No monthly fees, no setup costs.";
+        message = "ShopNaija costs ₦75,000 annually but we're offering a massive discount! Contact us on WhatsApp at +2348158025887 to get this special offer.";
         break;
       case "Templates":
         message = "Choose from beautiful, mobile-responsive store templates designed specifically for Nigerian businesses.";
@@ -60,7 +61,7 @@ const LandingPage = () => {
         message = "Complete guides and tutorials are available to help you set up and manage your online store successfully.";
         break;
       case "About":
-        message = "GrowthSmallBeez empowers Nigerian entrepreneurs to build successful online businesses with our all-in-one e-commerce platform.";
+        message = "ShopNaija empowers Nigerian entrepreneurs to build successful online businesses with our all-in-one e-commerce platform.";
         break;
       case "Privacy Policy":
         message = "We protect your data and privacy. Your information is secure and never shared with third parties without your consent.";
@@ -101,7 +102,7 @@ const LandingPage = () => {
     {
       name: "Adaora Okonkwo",
       business: "Fashion Boutique",
-      content: "GrowthSmallBeez transformed my fashion business. Sales increased by 300% in just 3 months!",
+      content: "ShopNaija transformed my fashion business. Sales increased by 300% in just 3 months!",
       rating: 5
     },
     {
@@ -129,7 +130,7 @@ const LandingPage = () => {
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               Grow Your 
               <span className="block text-green-600">Small Business</span>
-              <span className="block">Online</span>
+              <span className="block">Online with ShopNaija</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
               The all-in-one platform for Nigerian entrepreneurs to create beautiful online stores, 
@@ -145,9 +146,14 @@ const LandingPage = () => {
                 Start Your Store Today
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <p className="text-sm text-gray-500">
-                Free setup • No monthly fees • 24/7 support
-              </p>
+              <div className="text-center">
+                <p className="text-sm text-gray-500">
+                  ₦75,000/year • Massive discount available • 24/7 support
+                </p>
+                <p className="text-xs text-green-600 font-semibold">
+                  Contact us on WhatsApp for special pricing!
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -172,6 +178,59 @@ const LandingPage = () => {
                 <p className="text-gray-600">{feature.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold text-gray-900 mb-6">
+            Simple, Affordable Pricing
+          </h2>
+          <div className="bg-white rounded-2xl shadow-xl p-8 border-4 border-green-600 relative">
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+              <span className="bg-green-600 text-white px-6 py-2 rounded-full text-sm font-semibold">
+                MASSIVE DISCOUNT AVAILABLE
+              </span>
+            </div>
+            <div className="mt-4">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Annual Plan</h3>
+              <div className="mb-6">
+                <span className="text-5xl font-bold text-green-600">₦75,000</span>
+                <span className="text-gray-600">/year</span>
+              </div>
+              <ul className="text-left space-y-3 mb-8">
+                <li className="flex items-center">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>Custom subdomain (yourstore.shopnaija.com)</span>
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>Unlimited products</span>
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>PayStack payment integration</span>
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>WhatsApp order notifications</span>
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <span>24/7 customer support</span>
+                </li>
+              </ul>
+              <Button 
+                onClick={handleGetStarted}
+                size="lg"
+                className="w-full text-white font-semibold text-lg py-4"
+                style={{ backgroundColor: '#00A862' }}
+              >
+                Contact Us for Special Discount
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -213,14 +272,14 @@ const LandingPage = () => {
             Ready to Start Your Online Business?
           </h2>
           <p className="text-xl text-green-100 mb-8">
-            Join thousands of Nigerian entrepreneurs who trust GrowthSmallBeez to power their online success.
+            Join thousands of Nigerian entrepreneurs who trust ShopNaija to power their online success.
           </p>
           <Button 
             onClick={handleGetStarted}
             size="lg"
             className="bg-white text-green-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            Get Started Now - It's Free!
+            Get Started Now - Special Discount Available!
           </Button>
         </div>
       </section>
@@ -230,10 +289,11 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-2xl font-bold text-green-400 mb-4">GrowthSmallBeez</h3>
+              <h3 className="text-2xl font-bold text-green-400 mb-4">ShopNaija</h3>
               <p className="text-gray-300">
                 Empowering Nigerian entrepreneurs to build successful online businesses.
               </p>
+              <p className="text-gray-400 text-sm mt-2">www.shopnaija.com</p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
@@ -261,7 +321,7 @@ const LandingPage = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>© 2024 GrowthSmallBeez. All rights reserved. Made with ❤️ for Nigerian entrepreneurs.</p>
+            <p>© 2024 ShopNaija. All rights reserved. Made with ❤️ for Nigerian entrepreneurs.</p>
           </div>
         </div>
       </footer>

@@ -10,7 +10,7 @@ const Navbar = () => {
 
   const handleGetStarted = () => {
     const whatsappMessage = encodeURIComponent(
-      "Hello! I want to register as an admin on GrowthSmallBeez. Please help me set up my store with the following details: Name, Phone, Email, NIN, Account Name, Account Number, Bank Name, Website Name, and Subdomain."
+      "Hello! I want to register as an admin on ShopNaija. I'm interested in the ₦75,000 annual plan with the massive discount. Please help me set up my store with the following details: Name, Phone, Email, NIN, Account Name, Account Number, Bank Name, Website Name, and Subdomain."
     );
     window.open(`https://wa.me/+2348158025887?text=${whatsappMessage}`, '_blank');
   };
@@ -26,8 +26,9 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <h1 className="text-2xl font-bold" style={{ color: '#00A862' }}>
-              GrowthSmallBeez
+              ShopNaija
             </h1>
+            <p className="text-xs text-gray-500">www.shopnaija.com</p>
           </div>
 
           {/* Desktop Navigation */}
@@ -50,7 +51,7 @@ const Navbar = () => {
                 variant="outline" 
                 className="border-green-600 text-green-600 hover:bg-green-50"
               >
-                Login
+                Admin Login
               </Button>
             </LoginModal>
             <Button 
@@ -94,7 +95,7 @@ const Navbar = () => {
                     variant="outline" 
                     className="w-full border-green-600 text-green-600 hover:bg-green-50"
                   >
-                    Login
+                    Admin Login
                   </Button>
                 </LoginModal>
                 <Button 
