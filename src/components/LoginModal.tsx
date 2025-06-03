@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, MessageCircle, Mail, Github, X } from "lucide-react";
+import { Loader2, Mail, Github } from "lucide-react";
 
 interface LoginModalProps {
   children: React.ReactNode;
@@ -37,26 +37,37 @@ const LoginModal = ({ children }: LoginModalProps) => {
 
       const user = await AuthService.getCurrentUser();
       
-      if (user && user.role === 'admin' && user.subdomain) {
-        navigate(`/${user.subdomain}/admin`);
+      if (user && (user.role === 'admin' || user.role === 'superadmin')) {
+        // Close modal first
+        setOpen(false);
+        
+        // Show success message
         toast({
           title: "Login successful",
-          description: "Welcome to your admin dashboard!",
+          description: `Welcome ${user.name}! Redirecting...`,
         });
-      } else if (user && user.role === 'superadmin') {
-        navigate("/dashboard");
-        toast({
-          title: "Login successful",
-          description: "Welcome to GrowthSmallBeez superadmin!",
-        });
+
+        // Redirect based on role
+        setTimeout(() => {
+          if (user.role === 'superadmin') {
+            navigate("/dashboard");
+          } else if (user.role === 'admin' && user.subdomain) {
+            navigate("/admin/dashboard");
+          } else {
+            toast({
+              title: "Setup Required",
+              description: "Your account needs configuration. Contact support.",
+              variant: "destructive",
+            });
+          }
+        }, 1000);
       } else {
         toast({
           title: "Access denied",
-          description: "This login is for admins only.",
+          description: "This login is for admins and superadmins only.",
           variant: "destructive",
         });
       }
-      setOpen(false);
     } catch (error: any) {
       toast({
         title: "Login failed",
@@ -68,10 +79,11 @@ const LoginModal = ({ children }: LoginModalProps) => {
     }
   };
 
-  const handleSocialLogin = async (provider: 'google' | 'github' | 'twitter') => {
+  const handleSocialLogin = async (provider: 'google' | 'github') => {
     setLoading(true);
     try {
       await AuthService.signInWithOAuth(provider);
+      setOpen(false);
     } catch (error: any) {
       toast({
         title: "Social login failed",
@@ -100,7 +112,7 @@ const LoginModal = ({ children }: LoginModalProps) => {
               Admin Login
             </CardTitle>
             <p className="text-gray-600">
-              Access your store dashboard
+              Access your dashboard
             </p>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -192,6 +204,14 @@ const LoginModal = ({ children }: LoginModalProps) => {
               >
                 Forgot your password?
               </button>
+            </div>
+
+            {/* Info for new admins */}
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-800 text-center">
+                <strong>New Admin?</strong> Only superadmins can register new admin accounts. 
+                Contact support if you need an admin account created.
+              </p>
             </div>
           </CardContent>
         </Card>
