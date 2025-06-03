@@ -16,7 +16,7 @@ const Navbar = () => {
   };
 
   const handleFollowTwitter = () => {
-    window.open('https://twitter.com/growthsmallbeez', '_blank');
+    window.open('https://x.com/Caleb0533', '_blank');
   };
 
   return (

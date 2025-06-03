@@ -1,14 +1,82 @@
-
+import { useEffect } from "react";
 import { CheckCircle, Users, ShoppingBag, TrendingUp, Star, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 
 const LandingPage = () => {
+  const { toast } = useToast();
+
+  // Auto-refresh functionality
+  useEffect(() => {
+    const refreshTimeout = setTimeout(() => {
+      window.location.reload();
+    }, 30000); // Refresh after 30 seconds of inactivity
+
+    // Clear timeout on component unmount or user activity
+    const handleActivity = () => {
+      clearTimeout(refreshTimeout);
+    };
+
+    window.addEventListener('click', handleActivity);
+    window.addEventListener('scroll', handleActivity);
+    window.addEventListener('keypress', handleActivity);
+
+    return () => {
+      clearTimeout(refreshTimeout);
+      window.removeEventListener('click', handleActivity);
+      window.removeEventListener('scroll', handleActivity);
+      window.removeEventListener('keypress', handleActivity);
+    };
+  }, []);
+
   const handleGetStarted = () => {
     const whatsappMessage = encodeURIComponent(
       "Hello! I want to register as an admin on GrowthSmallBeez. Please help me set up my store with the following details: Name, Phone, Email, NIN, Account Name, Account Number, Bank Name, Website Name, and Subdomain."
     );
     window.open(`https://wa.me/+2348158025887?text=${whatsappMessage}`, '_blank');
+  };
+
+  const handleFooterClick = (section: string, item: string) => {
+    let message = "";
+    
+    switch (item) {
+      case "Features":
+        message = "GrowthSmallBeez offers beautiful online stores, sales analytics, and customer management tools to help Nigerian entrepreneurs succeed online.";
+        break;
+      case "Pricing":
+        message = "GrowthSmallBeez is free to start! We only charge a small fee when you make sales. No monthly fees, no setup costs.";
+        break;
+      case "Templates":
+        message = "Choose from beautiful, mobile-responsive store templates designed specifically for Nigerian businesses.";
+        break;
+      case "Help Center":
+        message = "Need help? Contact us on WhatsApp at +2348158025887 for instant support and guidance.";
+        break;
+      case "Contact Us":
+        message = "Reach out to us on WhatsApp: +2348158025887 or follow us on X @Caleb0533 for updates and support.";
+        break;
+      case "Documentation":
+        message = "Complete guides and tutorials are available to help you set up and manage your online store successfully.";
+        break;
+      case "About":
+        message = "GrowthSmallBeez empowers Nigerian entrepreneurs to build successful online businesses with our all-in-one e-commerce platform.";
+        break;
+      case "Privacy Policy":
+        message = "We protect your data and privacy. Your information is secure and never shared with third parties without your consent.";
+        break;
+      case "Terms of Service":
+        message = "Our terms ensure fair usage and protection for all users. We're committed to transparency and ethical business practices.";
+        break;
+      default:
+        message = "This feature is coming soon! Follow us on X @Caleb0533 for updates.";
+    }
+
+    toast({
+      title: item,
+      description: message,
+      duration: 5000,
+    });
   };
 
   const features = [
@@ -170,25 +238,25 @@ const LandingPage = () => {
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><a href="#features" className="hover:text-green-400">Features</a></li>
-                <li><a href="#pricing" className="hover:text-green-400">Pricing</a></li>
-                <li><a href="#" className="hover:text-green-400">Templates</a></li>
+                <li><button onClick={() => handleFooterClick('Product', 'Features')} className="hover:text-green-400 text-left">Features</button></li>
+                <li><button onClick={() => handleFooterClick('Product', 'Pricing')} className="hover:text-green-400 text-left">Pricing</button></li>
+                <li><button onClick={() => handleFooterClick('Product', 'Templates')} className="hover:text-green-400 text-left">Templates</button></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><a href="#" className="hover:text-green-400">Help Center</a></li>
-                <li><a href="#contact" className="hover:text-green-400">Contact Us</a></li>
-                <li><a href="#" className="hover:text-green-400">Documentation</a></li>
+                <li><button onClick={() => handleFooterClick('Support', 'Help Center')} className="hover:text-green-400 text-left">Help Center</button></li>
+                <li><button onClick={() => handleFooterClick('Support', 'Contact Us')} className="hover:text-green-400 text-left">Contact Us</button></li>
+                <li><button onClick={() => handleFooterClick('Support', 'Documentation')} className="hover:text-green-400 text-left">Documentation</button></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><a href="#about" className="hover:text-green-400">About</a></li>
-                <li><a href="#" className="hover:text-green-400">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-green-400">Terms of Service</a></li>
+                <li><button onClick={() => handleFooterClick('Company', 'About')} className="hover:text-green-400 text-left">About</button></li>
+                <li><button onClick={() => handleFooterClick('Company', 'Privacy Policy')} className="hover:text-green-400 text-left">Privacy Policy</button></li>
+                <li><button onClick={() => handleFooterClick('Company', 'Terms of Service')} className="hover:text-green-400 text-left">Terms of Service</button></li>
               </ul>
             </div>
           </div>
