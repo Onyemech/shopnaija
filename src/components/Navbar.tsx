@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { Twitter } from "lucide-react";
 import LoginModal from "./LoginModal";
 
 const Navbar = () => {
@@ -12,6 +13,10 @@ const Navbar = () => {
       "Hello! I want to register as an admin on GrowthSmallBeez. Please help me set up my store with the following details: Name, Phone, Email, NIN, Account Name, Account Number, Bank Name, Website Name, and Subdomain."
     );
     window.open(`https://wa.me/+2348158025887?text=${whatsappMessage}`, '_blank');
+  };
+
+  const handleFollowTwitter = () => {
+    window.open('https://twitter.com/growthsmallbeez', '_blank');
   };
 
   return (
@@ -28,18 +33,13 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
-              <a href="#features" className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors">
-                Features
-              </a>
-              <a href="#pricing" className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors">
-                Pricing
-              </a>
-              <a href="#about" className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors">
-                About
-              </a>
-              <a href="#contact" className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors">
-                Contact
-              </a>
+              <button 
+                onClick={handleFollowTwitter}
+                className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors flex items-center gap-2"
+              >
+                <Twitter size={16} />
+                Follow us on X
+              </button>
             </div>
           </div>
 
@@ -81,18 +81,13 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
-              <a href="#features" className="text-gray-700 hover:text-green-600 block px-3 py-2 text-base font-medium">
-                Features
-              </a>
-              <a href="#pricing" className="text-gray-700 hover:text-green-600 block px-3 py-2 text-base font-medium">
-                Pricing
-              </a>
-              <a href="#about" className="text-gray-700 hover:text-green-600 block px-3 py-2 text-base font-medium">
-                About
-              </a>
-              <a href="#contact" className="text-gray-700 hover:text-green-600 block px-3 py-2 text-base font-medium">
-                Contact
-              </a>
+              <button 
+                onClick={handleFollowTwitter}
+                className="text-gray-700 hover:text-green-600 block px-3 py-2 text-base font-medium flex items-center gap-2"
+              >
+                <Twitter size={16} />
+                Follow us on X
+              </button>
               <div className="px-3 py-2 space-y-3">
                 <LoginModal>
                   <Button 
