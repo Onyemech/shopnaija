@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { CheckCircle, Users, ShoppingBag, TrendingUp, Star, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,7 +32,7 @@ const LandingPage = () => {
 
   const handleGetStarted = () => {
     const whatsappMessage = encodeURIComponent(
-      "Hello! I want to register as an admin on ShopNaija. I'm interested in the ₦75,000 annual plan with the massive discount. Please help me set up my store with the following details: Name, Phone, Email, NIN, Account Name, Account Number, Bank Name, Website Name, and Subdomain."
+      "Hello! I want to register as an admin on ShopNaija. I'm interested in the ₦60,000 annual plan with the 20% discount. Please help me set up my store with the following details: Name, Phone, Email, NIN, Account Name, Account Number, Bank Name, Website Name, and Subdomain."
     );
     window.open(`https://wa.me/+2348158025887?text=${whatsappMessage}`, '_blank');
   };
@@ -46,7 +45,7 @@ const LandingPage = () => {
         message = "ShopNaija offers beautiful online stores, sales analytics, and customer management tools to help Nigerian entrepreneurs succeed online.";
         break;
       case "Pricing":
-        message = "ShopNaija costs ₦75,000 annually but we're offering a massive discount! Contact us on WhatsApp at +2348158025887 to get this special offer.";
+        message = "ShopNaija costs ₦60,000 annually but we're offering a 20% discount! Contact us on WhatsApp at +2348158025887 to get this special offer.";
         break;
       case "Templates":
         message = "Choose from beautiful, mobile-responsive store templates designed specifically for Nigerian businesses.";
@@ -147,11 +146,16 @@ const LandingPage = () => {
                 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
               <div className="text-center">
-                <p className="text-sm text-gray-500">
-                  ₦75,000/year • Massive discount available • 24/7 support
-                </p>
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <span className="text-gray-400 line-through text-sm">₦75,000/year</span>
+                  <span className="text-2xl font-bold text-green-600">₦60,000/year</span>
+                  <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse">20% OFF!</span>
+                </div>
                 <p className="text-xs text-green-600 font-semibold">
-                  Contact us on WhatsApp for special pricing!
+                  Special 3D Discount • Limited Time • 24/7 support
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Contact us on WhatsApp for this exclusive pricing!
                 </p>
               </div>
             </div>
@@ -186,24 +190,32 @@ const LandingPage = () => {
       <section className="py-12 sm:py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-            Simple, Affordable Pricing
+            Special Discount Pricing
           </h2>
           <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border-4 border-green-600 relative">
             <div className="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2">
-              <span className="bg-green-600 text-white px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-semibold">
-                MASSIVE DISCOUNT AVAILABLE
+              <span className="bg-red-500 text-white px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-semibold animate-pulse">
+                🎯 3D 20% DISCOUNT ACTIVE!
               </span>
             </div>
             <div className="mt-4">
               <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Annual Plan</h3>
               <div className="mb-6">
-                <span className="text-4xl sm:text-5xl font-bold text-green-600">₦75,000</span>
+                <div className="flex items-center justify-center gap-3 mb-2">
+                  <span className="text-2xl text-gray-400 line-through">₦75,000</span>
+                  <span className="text-4xl sm:text-5xl font-bold text-green-600">₦60,000</span>
+                </div>
                 <span className="text-gray-600">/year</span>
+                <div className="mt-2">
+                  <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">
+                    Save ₦15,000 with 3D Discount!
+                  </span>
+                </div>
               </div>
               <ul className="text-left space-y-3 mb-6 sm:mb-8">
                 <li className="flex items-center text-sm sm:text-base">
                   <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-3 flex-shrink-0" />
-                  <span>Custom subdomain (yourstore.shopnaija.com)</span>
+                  <span>Custom subdomain (yourstore.shopnaija.com.ng)</span>
                 </li>
                 <li className="flex items-center text-sm sm:text-base">
                   <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-3 flex-shrink-0" />
@@ -228,7 +240,7 @@ const LandingPage = () => {
                 className="w-full text-white font-semibold text-base sm:text-lg py-3 sm:py-4"
                 style={{ backgroundColor: '#00A862' }}
               >
-                Contact Us for Special Discount
+                Get 3D Discount - Save ₦15,000!
               </Button>
             </div>
           </div>
@@ -279,7 +291,7 @@ const LandingPage = () => {
             size="lg"
             className="bg-white text-green-600 hover:bg-gray-100 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            Get Started Now - Special Discount Available!
+            Get 3D Discount Now - Only ₦60,000/year!
           </Button>
         </div>
       </section>
@@ -293,7 +305,7 @@ const LandingPage = () => {
               <p className="text-gray-300 text-sm sm:text-base">
                 Empowering Nigerian entrepreneurs to build successful online businesses.
               </p>
-              <p className="text-gray-400 text-xs sm:text-sm mt-2">www.shopnaija.com</p>
+              <p className="text-gray-400 text-xs sm:text-sm mt-2">www.shopnaija.com.ng</p>
             </div>
             <div>
               <h4 className="font-semibold mb-4 text-sm sm:text-base">Product</h4>

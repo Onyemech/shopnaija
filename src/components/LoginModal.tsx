@@ -109,7 +109,7 @@ const LoginModal = ({ children }: LoginModalProps) => {
         <Card className="border-0 shadow-none">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-2xl font-bold text-gray-900">
-              Admin Login
+              Login
             </CardTitle>
             <p className="text-gray-600">
               Access your dashboard
