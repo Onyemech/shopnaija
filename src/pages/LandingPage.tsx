@@ -1,34 +1,73 @@
-import { useEffect } from "react";
-import { CheckCircle, Users, ShoppingBag, TrendingUp, Star, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CheckCircle, Users, ShoppingBag, TrendingUp, Star, ArrowRight, Wifi, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 
 const LandingPage = () => {
   const { toast } = useToast();
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  // Auto-refresh functionality
+  // Check network status
   useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  // Auto-refresh functionality with network check
+  useEffect(() => {
+    if (!isOnline) return;
+
     const refreshTimeout = setTimeout(() => {
       window.location.reload();
-    }, 30000); // Refresh after 30 seconds of inactivity
+    }, 60000); // Increased to 60 seconds
 
-    // Clear timeout on component unmount or user activity
     const handleActivity = () => {
       clearTimeout(refreshTimeout);
     };
 
-    window.addEventListener('click', handleActivity);
-    window.addEventListener('scroll', handleActivity);
-    window.addEventListener('keypress', handleActivity);
+    const events = ['click', 'scroll', 'keypress', 'mousemove', 'touchstart'];
+    events.forEach(event => {
+      window.addEventListener(event, handleActivity);
+    });
 
     return () => {
       clearTimeout(refreshTimeout);
-      window.removeEventListener('click', handleActivity);
-      window.removeEventListener('scroll', handleActivity);
-      window.removeEventListener('keypress', handleActivity);
+      events.forEach(event => {
+        window.removeEventListener(event, handleActivity);
+      });
     };
-  }, []);
+  }, [isOnline]);
+
+  // Show offline indicator
+  if (!isOnline) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center max-w-md mx-auto px-4">
+          <WifiOff className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">You're Offline</h1>
+          <p className="text-gray-600 mb-6">
+            Please check your internet connection and try again.
+          </p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="bg-green-600 hover:bg-green-700"
+          >
+            <Wifi className="h-4 w-4 mr-2" />
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const handleGetStarted = () => {
     const whatsappMessage = encodeURIComponent(
