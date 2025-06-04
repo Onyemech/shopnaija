@@ -24,6 +24,13 @@ export const requestNotificationPermission = async () => {
     if (permission === 'granted') {
       const token = await getToken(messaging, { vapidKey });
       console.log('FCM Token:', token);
+      
+      // Store the token for the current user if logged in
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.id) {
+        localStorage.setItem(`fcm_token_${user.id}`, token);
+      }
+      
       return token;
     }
     return null;
@@ -36,8 +43,43 @@ export const requestNotificationPermission = async () => {
 export const onMessageListener = () =>
   new Promise((resolve) => {
     onMessage(messaging, (payload) => {
+      console.log('Received foreground message:', payload);
       resolve(payload);
     });
   });
+
+// Function to send notification using the FCM REST API (alternative to server key)
+export const sendNotificationToUser = async (userToken: string, title: string, body: string, data?: any) => {
+  try {
+    const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `key=${vapidKey}` // Using VAPID key as fallback
+      },
+      body: JSON.stringify({
+        to: userToken,
+        notification: {
+          title,
+          body,
+          icon: '/favicon.ico',
+          badge: '/favicon.ico'
+        },
+        data: data || {}
+      })
+    });
+    
+    if (response.ok) {
+      console.log('Notification sent successfully');
+      return true;
+    } else {
+      console.error('Failed to send notification:', response.statusText);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    return false;
+  }
+};
 
 export { messaging };
