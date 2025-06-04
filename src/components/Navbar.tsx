@@ -24,7 +24,7 @@ const Navbar = () => {
 
   const handle3DDiscount = () => {
     toast({
-      title: "🎉 Special 3D Discount - 20% OFF!",
+      title: "🎉 Special Discount - 20% OFF!",
       description: "Get 20% off your annual subscription! This exclusive offer brings your cost down to ₦60,000/year (was ₦75,000). Contact us on WhatsApp to claim this limited-time discount and save ₦15,000!",
       duration: 8000,
     });

@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -6,59 +5,60 @@ import { useToast } from "@/hooks/use-toast";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const { user, subdomain } = useAuth();
+  const { user, subdomain, loading } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
+    if (loading) {
+      console.log("AuthCallback: Waiting for auth state to load...");
+      return; // Wait until loading is complete
+    }
+
     const handleCallback = async () => {
       try {
-        // Wait a moment for auth state to update
-        setTimeout(() => {
-          if (user) {
-            console.log("User authenticated:", user.role, "Subdomain:", subdomain);
-            
-            // Show success message
-            toast({
-              title: "Login successful",
-              description: `Welcome ${user.name}! Redirecting to your dashboard...`,
-            });
+        console.log("AuthCallback: User object:", user);
+        console.log("AuthCallback: Subdomain:", subdomain);
 
-            // Redirect based on user role
-            if (user.role === 'superadmin') {
-              console.log("Redirecting superadmin to dashboard");
-              navigate("/dashboard");
-            } else if (user.role === 'admin') {
-              console.log("Redirecting admin to admin dashboard");
-              // Check if admin has subdomain, if yes redirect to their admin area
-              if (user.subdomain) {
-                navigate("/admin/dashboard");
-              } else {
-                toast({
-                  title: "Setup Required",
-                  description: "Your admin account needs to be configured. Please contact support.",
-                  variant: "destructive",
-                });
-                navigate("/");
-              }
+        if (user) {
+          console.log("User role:", user.role);
+
+          toast({
+            title: "Login successful",
+            description: `Welcome ${user.name}! Redirecting to your dashboard...`,
+          });
+
+          if (user.role === 'superadmin') {
+            console.log("Redirecting superadmin to /dashboard");
+            navigate("/dashboard", { replace: true });
+          } else if (user.role === 'admin') {
+            console.log("Redirecting admin to /admin/dashboard");
+            if (user.subdomain) {
+              navigate("/admin/dashboard", { replace: true });
             } else {
-              // Customer or unrecognized role
-              console.log("Redirecting customer/other to home");
-              if (subdomain && subdomain !== 'superadmin') {
-                navigate("/");
-              } else {
-                navigate("/");
-              }
+              toast({
+                title: "Setup Required",
+                description: "Your admin account needs to be configured. Please contact support.",
+                variant: "destructive",
+              });
+              navigate("/dashboard", { replace: true });
             }
           } else {
-            console.log("No user found after auth callback");
-            toast({
-              title: "Authentication failed",
-              description: "Please try logging in again.",
-              variant: "destructive",
-            });
-            navigate("/");
+            console.log("Redirecting customer/other to home");
+            if (subdomain && subdomain !== "superadmin") {
+              navigate("/", { replace: true });
+            } else {
+              navigate("/", { replace: true });
+            }
           }
-        }, 1500); // Give auth state time to update
+        } else {
+          console.log("No user found after auth callback");
+          toast({
+            title: "Authentication failed",
+            description: "Please try logging in again.",
+            variant: "destructive",
+          });
+          navigate("/auth", { replace: true });
+        }
       } catch (error) {
         console.error("Auth callback error:", error);
         toast({
@@ -66,12 +66,12 @@ const AuthCallback = () => {
           description: "Something went wrong. Please try again.",
           variant: "destructive",
         });
-        navigate("/");
+        navigate("/auth", { replace: true });
       }
     };
 
     handleCallback();
-  }, [user, navigate, toast, subdomain]);
+  }, [loading, user, navigate, toast, subdomain]); // Re-run when loading or user changes
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">

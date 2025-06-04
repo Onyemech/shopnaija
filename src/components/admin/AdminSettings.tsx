@@ -87,7 +87,6 @@ const AdminSettings = () => {
       <h2 className="text-2xl font-bold">Settings</h2>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Store Settings */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
