@@ -31,7 +31,7 @@ export class AuthService {
       password,
       options: {
         data: userData,
-        emailRedirectTo: `${window.location.origin}/auth/callback`
+        emailRedirectTo: `https://www.shopnaija.com/auth/callback`
       }
     });
 
@@ -75,12 +75,19 @@ export class AuthService {
   }
 
   static async signIn(email: string, password: string) {
+    console.log('Attempting to sign in with email:', email);
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Sign in error:', error);
+      throw error;
+    }
+    
+    console.log('Sign in successful:', data);
     return data;
   }
 
@@ -98,7 +105,7 @@ export class AuthService {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `https://www.shopnaija.com/auth/callback`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -117,7 +124,7 @@ export class AuthService {
 
   static async resetPassword(email: string, redirectTo?: string) {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: redirectTo || `${window.location.origin}/reset-password`
+      redirectTo: redirectTo || `https://www.shopnaija.com/reset-password`
     });
 
     if (error) throw error;
@@ -156,6 +163,8 @@ export class AuthService {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
 
+    console.log('Current auth user:', user);
+
     // Get user profile from our users table
     const { data: profile, error } = await supabase
       .from('users')
@@ -163,7 +172,33 @@ export class AuthService {
       .eq('id', user.id)
       .maybeSingle();
 
-    if (error || !profile) return null;
+    console.log('User profile from database:', profile, 'Error:', error);
+
+    if (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
+
+    if (!profile) {
+      console.log('No profile found, creating basic user object');
+      // If no profile exists, create a basic user object from auth data
+      return {
+        id: user.id,
+        email: user.email!,
+        name: user.user_metadata?.name || user.email!,
+        role: user.user_metadata?.role || 'customer',
+        phone: user.phone,
+        subdomain: user.user_metadata?.subdomain,
+        website_name: user.user_metadata?.website_name,
+        primary_color: user.user_metadata?.primary_color || '#00A862',
+        is_active: true,
+        email_verified: user.email_confirmed_at !== null,
+        phone_verified: user.phone_confirmed_at !== null,
+        created_at: user.created_at,
+        updated_at: new Date().toISOString()
+      } as User;
+    }
+
     return profile;
   }
 
@@ -184,7 +219,10 @@ export class AuthService {
   static async resendConfirmation(email: string) {
     const { data, error } = await supabase.auth.resend({
       type: 'signup',
-      email
+      email,
+      options: {
+        emailRedirectTo: `https://www.shopnaija.com/auth/callback`
+      }
     });
 
     if (error) throw error;

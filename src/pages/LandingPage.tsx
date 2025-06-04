@@ -124,27 +124,27 @@ const LandingPage = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-50 to-white py-20">
+      <section className="bg-gradient-to-br from-green-50 to-white py-12 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
               Grow Your 
               <span className="block text-green-600">Small Business</span>
               <span className="block">Online with ShopNaija</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
               The all-in-one platform for Nigerian entrepreneurs to create beautiful online stores, 
               manage customers, and grow their business with powerful tools designed for success.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4">
               <Button 
                 onClick={handleGetStarted}
                 size="lg"
-                className="text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                className="text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto"
                 style={{ backgroundColor: '#00A862' }}
               >
                 Start Your Store Today
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
               <div className="text-center">
                 <p className="text-sm text-gray-500">
@@ -160,22 +160,22 @@ const LandingPage = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-white">
+      <section id="features" className="py-12 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               Everything You Need to Succeed
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4">
               Powerful features designed specifically for Nigerian small businesses
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="text-center p-8 rounded-xl bg-gray-50 hover:bg-green-50 transition-colors">
-                <feature.icon className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+              <div key={index} className="text-center p-6 sm:p-8 rounded-xl bg-gray-50 hover:bg-green-50 transition-colors">
+                <feature.icon className="h-10 w-10 sm:h-12 sm:w-12 text-green-600 mx-auto mb-4" />
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
+                <p className="text-gray-600 text-sm sm:text-base">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -183,49 +183,49 @@ const LandingPage = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-12 sm:py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
             Simple, Affordable Pricing
           </h2>
-          <div className="bg-white rounded-2xl shadow-xl p-8 border-4 border-green-600 relative">
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-              <span className="bg-green-600 text-white px-6 py-2 rounded-full text-sm font-semibold">
+          <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border-4 border-green-600 relative">
+            <div className="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2">
+              <span className="bg-green-600 text-white px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-semibold">
                 MASSIVE DISCOUNT AVAILABLE
               </span>
             </div>
             <div className="mt-4">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Annual Plan</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Annual Plan</h3>
               <div className="mb-6">
-                <span className="text-5xl font-bold text-green-600">₦75,000</span>
+                <span className="text-4xl sm:text-5xl font-bold text-green-600">₦75,000</span>
                 <span className="text-gray-600">/year</span>
               </div>
-              <ul className="text-left space-y-3 mb-8">
-                <li className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+              <ul className="text-left space-y-3 mb-6 sm:mb-8">
+                <li className="flex items-center text-sm sm:text-base">
+                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-3 flex-shrink-0" />
                   <span>Custom subdomain (yourstore.shopnaija.com)</span>
                 </li>
-                <li className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                <li className="flex items-center text-sm sm:text-base">
+                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-3 flex-shrink-0" />
                   <span>Unlimited products</span>
                 </li>
-                <li className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                <li className="flex items-center text-sm sm:text-base">
+                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-3 flex-shrink-0" />
                   <span>PayStack payment integration</span>
                 </li>
-                <li className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                <li className="flex items-center text-sm sm:text-base">
+                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-3 flex-shrink-0" />
                   <span>WhatsApp order notifications</span>
                 </li>
-                <li className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                <li className="flex items-center text-sm sm:text-base">
+                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-3 flex-shrink-0" />
                   <span>24/7 customer support</span>
                 </li>
               </ul>
               <Button 
                 onClick={handleGetStarted}
                 size="lg"
-                className="w-full text-white font-semibold text-lg py-4"
+                className="w-full text-white font-semibold text-base sm:text-lg py-3 sm:py-4"
                 style={{ backgroundColor: '#00A862' }}
               >
                 Contact Us for Special Discount
@@ -236,28 +236,28 @@ const LandingPage = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-green-50">
+      <section className="py-12 sm:py-20 bg-green-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               What Our Customers Say
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-lg sm:text-xl text-gray-600 px-4">
               Join thousands of successful Nigerian entrepreneurs
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {testimonials.map((testimonial, index) => (
               <div key={index} className="bg-white p-6 rounded-xl shadow-lg">
                 <div className="flex mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                    <Star key={i} className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-gray-600 mb-4 italic">"{testimonial.content}"</p>
+                <p className="text-gray-600 mb-4 italic text-sm sm:text-base">"{testimonial.content}"</p>
                 <div>
-                  <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                  <p className="text-sm text-gray-500">{testimonial.business}</p>
+                  <p className="font-semibold text-gray-900 text-sm sm:text-base">{testimonial.name}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">{testimonial.business}</p>
                 </div>
               </div>
             ))}
@@ -266,18 +266,18 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-green-600">
+      <section className="py-12 sm:py-20 bg-green-600">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 sm:mb-6">
             Ready to Start Your Online Business?
           </h2>
-          <p className="text-xl text-green-100 mb-8">
+          <p className="text-lg sm:text-xl text-green-100 mb-6 sm:mb-8 px-4">
             Join thousands of Nigerian entrepreneurs who trust ShopNaija to power their online success.
           </p>
           <Button 
             onClick={handleGetStarted}
             size="lg"
-            className="bg-white text-green-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            className="bg-white text-green-600 hover:bg-gray-100 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
           >
             Get Started Now - Special Discount Available!
           </Button>
@@ -285,43 +285,43 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-gray-900 text-white py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-2xl font-bold text-green-400 mb-4">ShopNaija</h3>
-              <p className="text-gray-300">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+            <div className="col-span-2 md:col-span-1">
+              <h3 className="text-xl sm:text-2xl font-bold text-green-400 mb-4">ShopNaija</h3>
+              <p className="text-gray-300 text-sm sm:text-base">
                 Empowering Nigerian entrepreneurs to build successful online businesses.
               </p>
-              <p className="text-gray-400 text-sm mt-2">www.shopnaija.com</p>
+              <p className="text-gray-400 text-xs sm:text-sm mt-2">www.shopnaija.com</p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Product</h4>
+              <h4 className="font-semibold mb-4 text-sm sm:text-base">Product</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><button onClick={() => handleFooterClick('Product', 'Features')} className="hover:text-green-400 text-left">Features</button></li>
-                <li><button onClick={() => handleFooterClick('Product', 'Pricing')} className="hover:text-green-400 text-left">Pricing</button></li>
-                <li><button onClick={() => handleFooterClick('Product', 'Templates')} className="hover:text-green-400 text-left">Templates</button></li>
+                <li><button onClick={() => handleFooterClick('Product', 'Features')} className="hover:text-green-400 text-left text-xs sm:text-sm">Features</button></li>
+                <li><button onClick={() => handleFooterClick('Product', 'Pricing')} className="hover:text-green-400 text-left text-xs sm:text-sm">Pricing</button></li>
+                <li><button onClick={() => handleFooterClick('Product', 'Templates')} className="hover:text-green-400 text-left text-xs sm:text-sm">Templates</button></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
+              <h4 className="font-semibold mb-4 text-sm sm:text-base">Support</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><button onClick={() => handleFooterClick('Support', 'Help Center')} className="hover:text-green-400 text-left">Help Center</button></li>
-                <li><button onClick={() => handleFooterClick('Support', 'Contact Us')} className="hover:text-green-400 text-left">Contact Us</button></li>
-                <li><button onClick={() => handleFooterClick('Support', 'Documentation')} className="hover:text-green-400 text-left">Documentation</button></li>
+                <li><button onClick={() => handleFooterClick('Support', 'Help Center')} className="hover:text-green-400 text-left text-xs sm:text-sm">Help Center</button></li>
+                <li><button onClick={() => handleFooterClick('Support', 'Contact Us')} className="hover:text-green-400 text-left text-xs sm:text-sm">Contact Us</button></li>
+                <li><button onClick={() => handleFooterClick('Support', 'Documentation')} className="hover:text-green-400 text-left text-xs sm:text-sm">Documentation</button></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Company</h4>
+              <h4 className="font-semibold mb-4 text-sm sm:text-base">Company</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><button onClick={() => handleFooterClick('Company', 'About')} className="hover:text-green-400 text-left">About</button></li>
-                <li><button onClick={() => handleFooterClick('Company', 'Privacy Policy')} className="hover:text-green-400 text-left">Privacy Policy</button></li>
-                <li><button onClick={() => handleFooterClick('Company', 'Terms of Service')} className="hover:text-green-400 text-left">Terms of Service</button></li>
+                <li><button onClick={() => handleFooterClick('Company', 'About')} className="hover:text-green-400 text-left text-xs sm:text-sm">About</button></li>
+                <li><button onClick={() => handleFooterClick('Company', 'Privacy Policy')} className="hover:text-green-400 text-left text-xs sm:text-sm">Privacy Policy</button></li>
+                <li><button onClick={() => handleFooterClick('Company', 'Terms of Service')} className="hover:text-green-400 text-left text-xs sm:text-sm">Terms of Service</button></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>© 2024 ShopNaija. All rights reserved. Made with ❤️ for Nigerian entrepreneurs.</p>
+          <div className="border-t border-gray-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-gray-400">
+            <p className="text-xs sm:text-sm">© 2024 ShopNaija. All rights reserved. Made with ❤️ for Nigerian entrepreneurs.</p>
           </div>
         </div>
       </footer>
