@@ -25,10 +25,15 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 className="text-2xl font-bold" style={{ color: '#00A862' }}>
-              ShopNaija
-            </h1>
-            <p className="text-xs text-gray-500">www.shopnaija.com</p>
+            <div className="flex items-center gap-2">
+              <img 
+                src="/logo.png" 
+                alt="ShopNaija Logo" 
+                className="h-8 w-auto"
+              />
+              <span className="text-2xl font-bold text-green-600">ShopNaija</span>
+              <span className="text-xs text-gray-500">www.shopnaija.com.ng</span>
+            </div>
           </div>
 
           {/* Desktop Navigation */}
@@ -95,7 +100,7 @@ const Navbar = () => {
                     variant="outline" 
                     className="w-full border-green-600 text-green-600 hover:bg-green-50"
                   >
-                    Admin Login
+                    Login
                   </Button>
                 </LoginModal>
                 <Button 
