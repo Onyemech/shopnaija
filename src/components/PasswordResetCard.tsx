@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, Eye, EyeOff } from "lucide-react";
+import { Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
 
 const PasswordResetCard = () => {
   const [password, setPassword] = useState("");
@@ -15,6 +15,7 @@ const PasswordResetCard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -44,14 +45,16 @@ const PasswordResetCard = () => {
 
     try {
       await AuthService.updatePassword(password);
+      setIsSuccess(true);
+      
       toast({
         title: "Password updated successfully!",
-        description: "Your password has been updated. Redirecting to login...",
+        description: "Your password has been updated. You can now log in with your new password.",
       });
       
       setTimeout(() => {
-        navigate("/");
-      }, 2000);
+        navigate("/auth");
+      }, 3000);
     } catch (error: any) {
       console.error("Password update error:", error);
       toast({
@@ -63,6 +66,37 @@ const PasswordResetCard = () => {
       setIsLoading(false);
     }
   };
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-white px-4">
+        <div className="w-full max-w-md">
+          <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardHeader className="space-y-1 text-center pb-6">
+              <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-8 h-8 text-green-600" />
+              </div>
+              <CardTitle className="text-2xl font-bold text-gray-900">
+                Password Updated!
+              </CardTitle>
+              <CardDescription className="text-gray-600">
+                Your password has been successfully updated. You will be redirected to the login page shortly.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <Button
+                onClick={() => navigate("/auth")}
+                className="w-full h-12 text-white font-semibold text-base rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                style={{ backgroundColor: '#00A862' }}
+              >
+                Go to Login
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-white px-4">
@@ -76,7 +110,7 @@ const PasswordResetCard = () => {
               Create New Password
             </CardTitle>
             <CardDescription className="text-gray-600">
-              Enter your new password for ShopNaija
+              Enter your new password for GrowthSmallBeez
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -138,7 +172,7 @@ const PasswordResetCard = () => {
             </form>
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
-                Powered by <span className="font-semibold text-green-600">ShopNaija</span>
+                Powered by <span className="font-semibold text-green-600">GrowthSmallBeez</span>
               </p>
             </div>
           </CardContent>

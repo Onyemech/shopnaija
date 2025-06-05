@@ -24,30 +24,32 @@ const AuthCallback = () => {
           console.log("User role:", user.role);
 
           toast({
-            title: "Login successful",
+            title: "Authentication successful",
             description: `Welcome ${user.name}! Redirecting to your dashboard...`,
           });
 
-          // Fixed redirect logic with proper role-based routing
-          if (user.role === 'superadmin') {
-            console.log("Redirecting superadmin to /dashboard");
-            navigate("/dashboard", { replace: true });
-          } else if (user.role === 'admin') {
-            console.log("Redirecting admin to /admin/dashboard");
-            if (user.subdomain) {
-              navigate("/admin/dashboard", { replace: true });
-            } else {
-              toast({
-                title: "Setup Required",
-                description: "Your admin account needs to be configured. Please contact support.",
-                variant: "destructive",
-              });
+          // Add delay to ensure state is properly set
+          setTimeout(() => {
+            if (user.role === 'superadmin') {
+              console.log("Redirecting superadmin to /dashboard");
               navigate("/dashboard", { replace: true });
+            } else if (user.role === 'admin') {
+              console.log("Redirecting admin to /admin/dashboard");
+              if (user.subdomain) {
+                navigate("/admin/dashboard", { replace: true });
+              } else {
+                toast({
+                  title: "Setup Required",
+                  description: "Your admin account needs to be configured. Please contact support.",
+                  variant: "destructive",
+                });
+                navigate("/auth", { replace: true });
+              }
+            } else {
+              console.log("Redirecting customer/other to home");
+              navigate("/", { replace: true });
             }
-          } else {
-            console.log("Redirecting customer/other to home");
-            navigate("/", { replace: true });
-          }
+          }, 1500);
         } else {
           console.log("No user found after auth callback");
           toast({
@@ -68,8 +70,8 @@ const AuthCallback = () => {
       }
     };
 
-    // Add a small delay to ensure auth state is fully loaded
-    const timeoutId = setTimeout(handleCallback, 100);
+    // Add a delay to ensure auth state is fully loaded
+    const timeoutId = setTimeout(handleCallback, 500);
     
     return () => clearTimeout(timeoutId);
   }, [loading, user, navigate, toast, subdomain]);

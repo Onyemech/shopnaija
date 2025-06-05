@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthService } from "@/services/AuthService";
@@ -24,9 +24,22 @@ const Auth = () => {
   const [name, setName] = useState("");
   const [nin, setNin] = useState("");
   
-  const { subdomain } = useAuth();
+  const { subdomain, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Redirect authenticated users
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'superadmin') {
+        navigate("/dashboard", { replace: true });
+      } else if (user.role === 'admin' && user.subdomain) {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [user, navigate]);
 
   const isAdminSubdomain = subdomain && subdomain !== 'superadmin';
   const isSuperAdminSubdomain = subdomain === 'superadmin';
@@ -42,13 +55,27 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      await AuthService.signIn(email, password);
-      toast({
-        title: "Login successful",
-        description: "Welcome back!",
-      });
+      const { data } = await AuthService.signIn(email, password);
       
-      // Redirect will be handled by AuthCallback component
+      if (data.user) {
+        toast({
+          title: "Login successful",
+          description: "Welcome back! Redirecting...",
+        });
+        
+        // Get user profile to determine redirect
+        const userProfile = await AuthService.getCurrentUser();
+        
+        setTimeout(() => {
+          if (userProfile?.role === 'superadmin') {
+            navigate("/dashboard", { replace: true });
+          } else if (userProfile?.role === 'admin' && userProfile.subdomain) {
+            navigate("/admin/dashboard", { replace: true });
+          } else {
+            navigate("/", { replace: true });
+          }
+        }, 1000);
+      }
     } catch (error: any) {
       console.error("Login error:", error);
       toast({

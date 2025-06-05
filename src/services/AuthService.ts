@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types";
 
@@ -31,12 +30,73 @@ export class AuthService {
       password,
       options: {
         data: userData,
-        emailRedirectTo: `https://www.shopnaija.com/auth/callback`
+        emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     });
 
     if (error) throw error;
     return data;
+  }
+
+  static async createAdminWithPassword(adminData: {
+    name: string;
+    email: string;
+    password: string;
+    phone?: string;
+    nin: string;
+    subdomain: string;
+    website_name: string;
+    primary_color?: string;
+    account_name?: string;
+    account_number?: string;
+    bank_name?: string;
+  }) {
+    // Create the admin user with auth
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      email: adminData.email,
+      password: adminData.password,
+      email_confirm: true,
+      user_metadata: {
+        name: adminData.name,
+        role: 'admin',
+        subdomain: adminData.subdomain,
+        website_name: adminData.website_name,
+        primary_color: adminData.primary_color || '#00A862',
+        phone: adminData.phone,
+        nin: adminData.nin,
+        account_name: adminData.account_name,
+        account_number: adminData.account_number,
+        bank_name: adminData.bank_name,
+      }
+    });
+
+    if (authError) throw authError;
+
+    // Create profile in users table
+    const { data: profileData, error: profileError } = await supabase
+      .from('users')
+      .insert({
+        id: authData.user.id,
+        name: adminData.name,
+        email: adminData.email,
+        phone: adminData.phone,
+        nin: adminData.nin,
+        role: 'admin',
+        subdomain: adminData.subdomain,
+        website_name: adminData.website_name,
+        primary_color: adminData.primary_color || '#00A862',
+        account_name: adminData.account_name,
+        account_number: adminData.account_number,
+        bank_name: adminData.bank_name,
+        is_active: true,
+        email_verified: true
+      })
+      .select()
+      .single();
+
+    if (profileError) throw profileError;
+
+    return { user: authData.user, profile: profileData };
   }
 
   static async validateNIN(nin: string): Promise<{ valid: boolean; error?: string }> {
@@ -105,7 +165,7 @@ export class AuthService {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `https://www.shopnaija.com/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -124,7 +184,7 @@ export class AuthService {
 
   static async resetPassword(email: string, redirectTo?: string) {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: redirectTo || `https://www.shopnaija.com/reset-password`
+      redirectTo: redirectTo || `${window.location.origin}/reset-password`
     });
 
     if (error) throw error;
@@ -221,7 +281,7 @@ export class AuthService {
       type: 'signup',
       email,
       options: {
-        emailRedirectTo: `https://www.shopnaija.com/auth/callback`
+        emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     });
 

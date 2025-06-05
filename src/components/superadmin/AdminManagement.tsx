@@ -92,6 +92,7 @@ const AdminManagement = () => {
     const adminData: AdminCreateData = {
       name: formData.get('name') as string,
       email: formData.get('email') as string,
+      password: formData.get('password') as string,
       phone: formData.get('phone') as string,
       nin: formData.get('nin') as string,
       subdomain: formData.get('subdomain') as string,
@@ -157,7 +158,7 @@ const AdminManagement = () => {
             <DialogHeader>
               <DialogTitle>Create New Admin</DialogTitle>
               <DialogDescription>
-                Add a new admin to the GrowthSmallBeez platform.
+                Add a new admin to the GrowthSmallBeez platform. A temporary password will be provided.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={(e) => {
@@ -178,29 +179,44 @@ const AdminManagement = () => {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input id="phone" name="phone" />
+                    <Label htmlFor="password">Temporary Password *</Label>
+                    <Input 
+                      id="password" 
+                      name="password" 
+                      type="password"
+                      placeholder="Create a temporary password"
+                      required 
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Admin will need to change this on first login
+                    </p>
                   </div>
                   <div>
-                    <Label htmlFor="nin">NIN *</Label>
-                    <Input id="nin" name="nin" pattern="[0-9]{11}" required />
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input id="phone" name="phone" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
+                    <Label htmlFor="nin">NIN *</Label>
+                    <Input id="nin" name="nin" pattern="[0-9]{11}" required />
+                  </div>
+                  <div>
                     <Label htmlFor="subdomain">Subdomain *</Label>
                     <Input id="subdomain" name="subdomain" required />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="website_name">Website Name *</Label>
                     <Input id="website_name" name="website_name" required />
                   </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="primary_color">Primary Color</Label>
-                  <Input id="primary_color" name="primary_color" type="color" defaultValue="#1a56db" />
+                  <div>
+                    <Label htmlFor="primary_color">Primary Color</Label>
+                    <Input id="primary_color" name="primary_color" type="color" defaultValue="#1a56db" />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">

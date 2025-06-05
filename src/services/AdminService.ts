@@ -1,8 +1,10 @@
 import { supabase } from "@/integrations/supabase/client";
+import { AuthService } from "./AuthService";
 
 export interface AdminCreateData {
   name: string;
   email: string;
+  password: string; // Added password field
   phone?: string;
   nin: string;
   subdomain: string;
@@ -11,28 +13,35 @@ export interface AdminCreateData {
   account_name?: string;
   account_number?: string;
   bank_name?: string;
-  logo_url?: string;
-  is_active?: boolean;
-  referral_code?: string;
 }
 
 export class AdminService {
   static async createAdmin(adminData: AdminCreateData) {
-    const { data, error } = await supabase
-      .from('users')
-      .insert({
+    try {
+      // Generate a random referral code
+      const referralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      
+      // Create admin with password using AuthService
+      const result = await AuthService.createAdminWithPassword({
         ...adminData,
-        role: 'admin',
-        is_active: adminData.is_active ?? true,
-        primary_color: adminData.primary_color ?? '#1a56db',
-        email_verified: false,
-        phone_verified: false,
-      })
-      .select()
-      .single();
+        primary_color: adminData.primary_color || '#00A862'
+      });
 
-    if (error) throw error;
-    return data;
+      // Update the profile with referral code
+      const { data: updatedProfile, error: updateError } = await supabase
+        .from('users')
+        .update({ referral_code: referralCode })
+        .eq('id', result.user.id)
+        .select()
+        .single();
+
+      if (updateError) throw updateError;
+
+      return updatedProfile;
+    } catch (error: any) {
+      console.error('Error creating admin:', error);
+      throw new Error(error.message || 'Failed to create admin');
+    }
   }
 
   static async getAllAdmins() {
