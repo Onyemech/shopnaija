@@ -6,82 +6,60 @@ import { useToast } from "@/hooks/use-toast";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const { user, subdomain, loading } = useAuth();
+  const { user, loading } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (loading) {
-      console.log("AuthCallback: Waiting for auth state to load...");
-      return;
-    }
+    const handleCallback = () => {
+      console.log("AuthCallback: Processing...", { user, loading });
 
-    const handleCallback = async () => {
-      try {
-        console.log("AuthCallback: User object:", user);
-        console.log("AuthCallback: Subdomain:", subdomain);
+      if (loading) {
+        console.log("AuthCallback: Still loading, waiting...");
+        return;
+      }
 
-        if (user) {
-          console.log("User role:", user.role);
+      if (user) {
+        console.log("AuthCallback: User found:", user.role);
 
-          toast({
-            title: "Authentication successful",
-            description: `Welcome ${user.name}! Redirecting to your dashboard...`,
-          });
-
-          // Add delay to ensure state is properly set
-          setTimeout(() => {
-            if (user.role === 'superadmin') {
-              console.log("Redirecting superadmin to /dashboard");
-              navigate("/dashboard", { replace: true });
-            } else if (user.role === 'admin') {
-              console.log("Redirecting admin to /admin/dashboard");
-              if (user.subdomain) {
-                navigate("/admin/dashboard", { replace: true });
-              } else {
-                toast({
-                  title: "Setup Required",
-                  description: "Your admin account needs to be configured. Please contact support.",
-                  variant: "destructive",
-                });
-                navigate("/auth", { replace: true });
-              }
-            } else {
-              console.log("Redirecting customer/other to home");
-              navigate("/", { replace: true });
-            }
-          }, 1500);
-        } else {
-          console.log("No user found after auth callback");
-          toast({
-            title: "Authentication failed",
-            description: "Please try logging in again.",
-            variant: "destructive",
-          });
-          navigate("/auth", { replace: true });
-        }
-      } catch (error) {
-        console.error("Auth callback error:", error);
         toast({
-          title: "Authentication error",
-          description: "Something went wrong. Please try again.",
+          title: "Authentication successful",
+          description: `Welcome ${user.name}!`,
+        });
+
+        // Redirect based on role
+        if (user.role === 'superadmin') {
+          console.log("Redirecting superadmin to /dashboard");
+          navigate("/dashboard", { replace: true });
+        } else if (user.role === 'admin') {
+          console.log("Redirecting admin to /admin/dashboard");
+          navigate("/admin/dashboard", { replace: true });
+        } else {
+          console.log("Redirecting customer to home");
+          navigate("/", { replace: true });
+        }
+      } else {
+        console.log("AuthCallback: No user found");
+        toast({
+          title: "Authentication failed",
+          description: "Please try logging in again.",
           variant: "destructive",
         });
         navigate("/auth", { replace: true });
       }
     };
 
-    // Add a delay to ensure auth state is fully loaded
-    const timeoutId = setTimeout(handleCallback, 500);
+    // Give auth state time to settle
+    const timeoutId = setTimeout(handleCallback, 1000);
     
     return () => clearTimeout(timeoutId);
-  }, [loading, user, navigate, toast, subdomain]);
+  }, [user, loading, navigate, toast]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
         <h2 className="text-xl font-semibold text-gray-800 mb-2">Completing authentication...</h2>
-        <p className="text-gray-600">Please wait while we verify your account and redirect you.</p>
+        <p className="text-gray-600">Please wait while we verify your account.</p>
       </div>
     </div>
   );

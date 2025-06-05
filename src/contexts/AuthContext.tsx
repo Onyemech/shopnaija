@@ -36,51 +36,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    // Production subdomain extraction for .growthsmallbeez.com
+    // Production subdomain extraction for .lovable.app and custom domains
     const parts = hostname.split('.');
-    if (parts.length >= 3 && parts[1] === 'growthsmallbeez') {
+    if (parts.length >= 3) {
       setSubdomain(parts[0]);
     }
   }, []);
 
-  // Set up auth state listener with timeout
+  // Initialize auth state
   useEffect(() => {
     let mounted = true;
-    let timeoutId: NodeJS.Timeout;
 
     const initializeAuth = async () => {
       try {
         console.log('Initializing auth...');
         
-        // Set timeout to prevent infinite loading
-        timeoutId = setTimeout(() => {
-          console.log('Auth initialization timeout - stopping loading');
-          if (mounted) {
-            setLoading(false);
-          }
-        }, 5000); // 5 second timeout
-
-        // Check for existing session first
+        // Check current session
         const currentUser = await AuthService.getCurrentUser();
+        
         if (mounted) {
-          console.log('Current user check:', currentUser?.id, currentUser?.role);
+          console.log('Current user:', currentUser?.email, currentUser?.role);
           setUser(currentUser);
           setIsSuperAdmin(currentUser?.role === 'superadmin');
           setIsAdmin(currentUser?.role === 'admin');
           setLoading(false);
-          clearTimeout(timeoutId);
         }
 
-        // Set up auth state change listener
+        // Set up auth listener
         const { data: { subscription } } = AuthService.onAuthStateChange(async (user) => {
           if (!mounted) return;
           
-          console.log('Auth state change:', user?.id, user?.role);
+          console.log('Auth state changed:', user?.email, user?.role);
           setUser(user);
           setIsSuperAdmin(user?.role === 'superadmin');
           setIsAdmin(user?.role === 'admin');
-          setLoading(false);
-          clearTimeout(timeoutId);
+          
+          // Only set loading to false after we have processed the auth change
+          setTimeout(() => {
+            if (mounted) setLoading(false);
+          }, 100);
         });
 
         return () => {
@@ -90,16 +84,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error('Auth initialization error:', error);
         if (mounted) {
           setLoading(false);
-          clearTimeout(timeoutId);
         }
       }
     };
 
     const cleanup = initializeAuth();
     
+    // Set maximum loading time of 3 seconds
+    const timeoutId = setTimeout(() => {
+      if (mounted && loading) {
+        console.log('Auth timeout - stopping loading');
+        setLoading(false);
+      }
+    }, 3000);
+
     return () => {
       mounted = false;
-      if (timeoutId) clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
       cleanup.then(cleanupFn => cleanupFn?.());
     };
   }, []);
@@ -108,6 +109,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     try {
       await AuthService.signIn(email, password);
+      // Auth state change will be handled by the listener
     } catch (error) {
       setLoading(false);
       throw error;

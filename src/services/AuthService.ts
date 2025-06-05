@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types";
 
@@ -220,55 +221,63 @@ export class AuthService {
   }
 
   static async getCurrentUser(): Promise<User | null> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      
+      if (authError || !user) {
+        console.log('No authenticated user found');
+        return null;
+      }
 
-    console.log('Current auth user:', user);
+      console.log('Auth user found:', user.email);
 
-    // Get user profile from our users table
-    const { data: profile, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', user.id)
-      .maybeSingle();
+      // Get user profile from our users table
+      const { data: profile, error: profileError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
 
-    console.log('User profile from database:', profile, 'Error:', error);
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+        return null;
+      }
 
-    if (error) {
-      console.error('Error fetching user profile:', error);
+      if (!profile) {
+        console.log('No profile found, creating basic user object');
+        // If no profile exists, create a basic user object from auth data
+        return {
+          id: user.id,
+          email: user.email!,
+          name: user.user_metadata?.name || user.email!,
+          role: user.user_metadata?.role || 'customer',
+          phone: user.phone,
+          subdomain: user.user_metadata?.subdomain,
+          website_name: user.user_metadata?.website_name,
+          primary_color: user.user_metadata?.primary_color || '#00A862',
+          is_active: true,
+          email_verified: user.email_confirmed_at !== null,
+          phone_verified: user.phone_confirmed_at !== null,
+          created_at: user.created_at,
+          updated_at: new Date().toISOString()
+        } as User;
+      }
+
+      console.log('Profile found:', profile.email, profile.role);
+      return profile;
+    } catch (error) {
+      console.error('Error in getCurrentUser:', error);
       return null;
     }
-
-    if (!profile) {
-      console.log('No profile found, creating basic user object');
-      // If no profile exists, create a basic user object from auth data
-      return {
-        id: user.id,
-        email: user.email!,
-        name: user.user_metadata?.name || user.email!,
-        role: user.user_metadata?.role || 'customer',
-        phone: user.phone,
-        subdomain: user.user_metadata?.subdomain,
-        website_name: user.user_metadata?.website_name,
-        primary_color: user.user_metadata?.primary_color || '#00A862',
-        is_active: true,
-        email_verified: user.email_confirmed_at !== null,
-        phone_verified: user.phone_confirmed_at !== null,
-        created_at: user.created_at,
-        updated_at: new Date().toISOString()
-      } as User;
-    }
-
-    return profile;
   }
 
   static onAuthStateChange(callback: (user: User | null) => void) {
     return supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session?.user?.id);
+      console.log('Auth state changed:', event, session?.user?.email);
       
       if (session?.user) {
         const user = await this.getCurrentUser();
-        console.log('Retrieved user profile:', user);
+        console.log('Retrieved user profile for callback:', user?.email, user?.role);
         callback(user);
       } else {
         callback(null);
