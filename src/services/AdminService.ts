@@ -1,10 +1,11 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { AuthService } from "./AuthService";
 
 export interface AdminCreateData {
   name: string;
   email: string;
-  password: string; // Added password field
+  password: string;
   phone?: string;
   nin: string;
   subdomain: string;
@@ -13,6 +14,8 @@ export interface AdminCreateData {
   account_name?: string;
   account_number?: string;
   bank_name?: string;
+  is_active?: boolean;
+  referral_code?: string;
 }
 
 export class AdminService {
@@ -79,7 +82,7 @@ export class AdminService {
     return data;
   }
 
-  static async updateAdmin(id: string, updates: Partial<AdminCreateData>) {
+  static async updateAdmin(id: string, updates: Partial<AdminCreateData & { is_active: boolean; referral_code: string }>) {
     const { data, error } = await supabase
       .from('users')
       .update(updates)

@@ -55,9 +55,9 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      const { data } = await AuthService.signIn(email, password);
+      const result = await AuthService.signIn(email, password);
       
-      if (data.user) {
+      if (result.user) {
         toast({
           title: "Login successful",
           description: "Welcome back! Redirecting...",
