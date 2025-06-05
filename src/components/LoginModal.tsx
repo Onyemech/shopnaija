@@ -102,7 +102,7 @@ const LoginModal = ({ children }: LoginModalProps) => {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md max-h-[80vh] overflow-y-auto">
         <Card className="border-0 shadow-none">
           <CardHeader className="text-center pb-3">
             <CardTitle className="text-xl font-bold text-gray-900">

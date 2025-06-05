@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         console.log('Initializing auth...');
         
-        // Check current session
+        // Check current session first
         const currentUser = await AuthService.getCurrentUser();
         
         if (mounted) {
@@ -70,11 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(user);
           setIsSuperAdmin(user?.role === 'superadmin');
           setIsAdmin(user?.role === 'admin');
-          
-          // Only set loading to false after we have processed the auth change
-          setTimeout(() => {
-            if (mounted) setLoading(false);
-          }, 100);
+          setLoading(false);
         });
 
         return () => {
@@ -90,13 +86,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const cleanup = initializeAuth();
     
-    // Set maximum loading time of 3 seconds
+    // Set maximum loading time of 2 seconds
     const timeoutId = setTimeout(() => {
-      if (mounted && loading) {
+      if (mounted) {
         console.log('Auth timeout - stopping loading');
         setLoading(false);
       }
-    }, 3000);
+    }, 2000);
 
     return () => {
       mounted = false;

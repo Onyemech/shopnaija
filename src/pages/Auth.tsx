@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -31,6 +30,7 @@ const Auth = () => {
   // Redirect authenticated users
   useEffect(() => {
     if (user) {
+      console.log("User detected, redirecting based on role:", user.role);
       if (user.role === 'superadmin') {
         navigate("/dashboard", { replace: true });
       } else if (user.role === 'admin' && user.subdomain) {
@@ -45,7 +45,6 @@ const Auth = () => {
   const isSuperAdminSubdomain = subdomain === 'superadmin';
 
   const validateNIN = (ninValue: string): boolean => {
-    // Nigerian NIN validation: 11 digits
     const ninRegex = /^\d{11}$/;
     return ninRegex.test(ninValue);
   };
@@ -55,27 +54,15 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      const result = await AuthService.signIn(email, password);
+      console.log("Attempting login with:", email);
+      await AuthService.signIn(email, password);
       
-      if (result.user) {
-        toast({
-          title: "Login successful",
-          description: "Welcome back! Redirecting...",
-        });
-        
-        // Get user profile to determine redirect
-        const userProfile = await AuthService.getCurrentUser();
-        
-        setTimeout(() => {
-          if (userProfile?.role === 'superadmin') {
-            navigate("/dashboard", { replace: true });
-          } else if (userProfile?.role === 'admin' && userProfile.subdomain) {
-            navigate("/admin/dashboard", { replace: true });
-          } else {
-            navigate("/", { replace: true });
-          }
-        }, 1000);
-      }
+      toast({
+        title: "Login successful",
+        description: "Welcome back! Redirecting...",
+      });
+      
+      // The auth context will handle the redirect
     } catch (error: any) {
       console.error("Login error:", error);
       toast({
@@ -122,7 +109,6 @@ const Auth = () => {
       return;
     }
 
-    // Validate NIN for admin signups
     if ((isSuperAdminSubdomain || isAdminSubdomain) && !validateNIN(nin)) {
       toast({
         title: "Invalid NIN",
@@ -218,9 +204,9 @@ const Auth = () => {
   };
 
   const getBrandingTitle = () => {
-    if (isSuperAdminSubdomain) return "GrowthSmallBeez Admin";
+    if (isSuperAdminSubdomain) return "ShopNaija SuperAdmin";
     if (isAdminSubdomain) return `${subdomain} Admin Portal`;
-    return "GrowthSmallBeez";
+    return "ShopNaija";
   };
 
   const getBrandingDescription = () => {

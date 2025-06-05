@@ -26,17 +26,19 @@ const AuthCallback = () => {
           description: `Welcome ${user.name}!`,
         });
 
-        // Redirect based on role
-        if (user.role === 'superadmin') {
-          console.log("Redirecting superadmin to /dashboard");
-          navigate("/dashboard", { replace: true });
-        } else if (user.role === 'admin') {
-          console.log("Redirecting admin to /admin/dashboard");
-          navigate("/admin/dashboard", { replace: true });
-        } else {
-          console.log("Redirecting customer to home");
-          navigate("/", { replace: true });
-        }
+        // Redirect based on role with a slight delay to ensure state is set
+        setTimeout(() => {
+          if (user.role === 'superadmin') {
+            console.log("Redirecting superadmin to /dashboard");
+            navigate("/dashboard", { replace: true });
+          } else if (user.role === 'admin') {
+            console.log("Redirecting admin to /admin/dashboard");
+            navigate("/admin/dashboard", { replace: true });
+          } else {
+            console.log("Redirecting customer to home");
+            navigate("/", { replace: true });
+          }
+        }, 500);
       } else {
         console.log("AuthCallback: No user found");
         toast({
