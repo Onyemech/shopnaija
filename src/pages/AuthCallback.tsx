@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,7 +12,7 @@ const AuthCallback = () => {
   useEffect(() => {
     if (loading) {
       console.log("AuthCallback: Waiting for auth state to load...");
-      return; // Wait until loading is complete
+      return;
     }
 
     const handleCallback = async () => {
@@ -27,6 +28,7 @@ const AuthCallback = () => {
             description: `Welcome ${user.name}! Redirecting to your dashboard...`,
           });
 
+          // Fixed redirect logic with proper role-based routing
           if (user.role === 'superadmin') {
             console.log("Redirecting superadmin to /dashboard");
             navigate("/dashboard", { replace: true });
@@ -44,11 +46,7 @@ const AuthCallback = () => {
             }
           } else {
             console.log("Redirecting customer/other to home");
-            if (subdomain && subdomain !== "superadmin") {
-              navigate("/", { replace: true });
-            } else {
-              navigate("/", { replace: true });
-            }
+            navigate("/", { replace: true });
           }
         } else {
           console.log("No user found after auth callback");
@@ -70,8 +68,11 @@ const AuthCallback = () => {
       }
     };
 
-    handleCallback();
-  }, [loading, user, navigate, toast, subdomain]); // Re-run when loading or user changes
+    // Add a small delay to ensure auth state is fully loaded
+    const timeoutId = setTimeout(handleCallback, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [loading, user, navigate, toast, subdomain]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">

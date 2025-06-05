@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: string
+          ip_address: unknown | null
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       cart: {
         Row: {
           admin_id: string | null
@@ -344,7 +383,6 @@ export type Database = {
           logo_url: string | null
           name: string
           nin: string | null
-          password: string | null
           phone: string | null
           phone_verified: boolean | null
           primary_color: string | null
@@ -369,7 +407,6 @@ export type Database = {
           logo_url?: string | null
           name: string
           nin?: string | null
-          password?: string | null
           phone?: string | null
           phone_verified?: boolean | null
           primary_color?: string | null
@@ -394,7 +431,6 @@ export type Database = {
           logo_url?: string | null
           name?: string
           nin?: string | null
-          password?: string | null
           phone?: string | null
           phone_verified?: boolean | null
           primary_color?: string | null
@@ -428,6 +464,14 @@ export type Database = {
       get_user_id_by_email: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_superadmin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
       }
     }
     Enums: {

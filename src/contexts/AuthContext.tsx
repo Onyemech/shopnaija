@@ -21,6 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   // Extract subdomain from URL
   useEffect(() => {
@@ -43,27 +44,59 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Set up auth state listener
+  // Set up auth state listener with improved handling
   useEffect(() => {
-    setLoading(true);
+    let mounted = true;
 
-    const { data: { subscription } } = AuthService.onAuthStateChange((user) => {
-      setUser(user);
-      setIsSuperAdmin(user?.role === 'superadmin');
-      setIsAdmin(user?.role === 'admin');
-      setLoading(false);
-    });
+    const initializeAuth = async () => {
+      try {
+        setLoading(true);
 
-    // Check for existing session
-    AuthService.getCurrentUser().then((user) => {
-      setUser(user);
-      setIsSuperAdmin(user?.role === 'superadmin');
-      setIsAdmin(user?.role === 'admin');
-      setLoading(false);
-    });
+        // Set up auth state change listener
+        const { data: { subscription } } = AuthService.onAuthStateChange(async (user) => {
+          if (!mounted) return;
+          
+          console.log('Auth state change - User:', user?.id, 'Role:', user?.role);
+          setUser(user);
+          setIsSuperAdmin(user?.role === 'superadmin');
+          setIsAdmin(user?.role === 'admin');
+          setLoading(false);
+          
+          if (!initialized) {
+            setInitialized(true);
+          }
+        });
 
-    return () => subscription.unsubscribe();
-  }, []);
+        // Check for existing session
+        const currentUser = await AuthService.getCurrentUser();
+        if (mounted) {
+          console.log('Initial auth check - User:', currentUser?.id, 'Role:', currentUser?.role);
+          setUser(currentUser);
+          setIsSuperAdmin(currentUser?.role === 'superadmin');
+          setIsAdmin(currentUser?.role === 'admin');
+          setLoading(false);
+          setInitialized(true);
+        }
+
+        return () => {
+          subscription.unsubscribe();
+        };
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        if (mounted) {
+          setLoading(false);
+          setInitialized(true);
+        }
+      }
+    };
+
+    const cleanup = initializeAuth();
+    
+    return () => {
+      mounted = false;
+      cleanup.then(cleanupFn => cleanupFn?.());
+    };
+  }, [initialized]);
 
   const login = async (email: string, password: string) => {
     setLoading(true);
@@ -86,7 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = {
     user,
     subdomain,
-    loading,
+    loading: loading || !initialized,
     login,
     logout,
     isSuperAdmin,

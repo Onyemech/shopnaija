@@ -21,10 +21,17 @@ serve(async (req) => {
     const signature = req.headers.get('x-paystack-signature')
     const body = await req.text()
     
-    // Verify webhook signature
+    // Enhanced webhook signature verification with proper secret
+    const secretKey = Deno.env.get('PAYSTACK_LIVE_SECRET_KEY')
+    if (!secretKey) {
+      console.error('Paystack secret key not configured')
+      return new Response('Server configuration error', { status: 500 })
+    }
+
+    // Verify webhook signature using the correct secret key
     const hash = await crypto.subtle.importKey(
       'raw',
-      new TextEncoder().encode(Deno.env.get('PAYSTACK_SECRET_KEY')),
+      new TextEncoder().encode(secretKey),
       { name: 'HMAC', hash: 'SHA-512' },
       false,
       ['sign']
@@ -52,7 +59,13 @@ serve(async (req) => {
       const { data } = event
       const reference = data.reference
       
-      // Update order status
+      // Validate payment data
+      if (!reference || !data.amount || !data.customer?.email) {
+        console.error('Invalid payment data received')
+        return new Response('Invalid payment data', { status: 400 })
+      }
+
+      // Update order status with additional security checks
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .update({
@@ -61,6 +74,7 @@ serve(async (req) => {
           payment_reference: reference
         })
         .eq('order_reference', reference)
+        .eq('total_amount', data.amount / 100) // Convert from kobo and verify amount
         .select('*, admin_id, customer_name, customer_email, total_amount')
         .single()
 
@@ -69,11 +83,12 @@ serve(async (req) => {
         throw orderError
       }
 
-      // Get admin details for notification
+      // Verify the order belongs to the correct admin
       const { data: admin, error: adminError } = await supabase
         .from('users')
-        .select('name, phone, website_name')
+        .select('name, phone, website_name, account_number')
         .eq('id', orderData.admin_id)
+        .eq('role', 'admin')
         .single()
 
       if (!adminError && admin) {
@@ -92,11 +107,22 @@ serve(async (req) => {
           }
         })
 
-        // Create notification in database
+        // Create notification in database with audit logging
         await supabase.from('notifications').insert({
           recipient_id: orderData.admin_id,
           message: `New order ₦${orderData.total_amount.toLocaleString()} from ${orderData.customer_name}`,
           type: 'sale_notification'
+        })
+
+        // Log audit trail
+        await supabase.from('audit_logs').insert({
+          user_id: orderData.admin_id,
+          action: 'payment_completed',
+          table_name: 'orders',
+          record_id: orderData.id,
+          new_values: { payment_status: 'completed', reference },
+          ip_address: req.headers.get('x-forwarded-for'),
+          user_agent: req.headers.get('user-agent')
         })
       }
 
@@ -109,6 +135,25 @@ serve(async (req) => {
     )
   } catch (error) {
     console.error('Error in paystack-webhook:', error)
+    
+    // Log security errors for monitoring
+    try {
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      )
+      
+      await supabase.from('audit_logs').insert({
+        action: 'webhook_error',
+        table_name: 'paystack_webhook',
+        new_values: { error: error.message },
+        ip_address: req.headers.get('x-forwarded-for'),
+        user_agent: req.headers.get('user-agent')
+      })
+    } catch (logError) {
+      console.error('Failed to log error:', logError)
+    }
+
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

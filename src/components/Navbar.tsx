@@ -13,7 +13,7 @@ const Navbar = () => {
 
   const handleGetStarted = () => {
     const whatsappMessage = encodeURIComponent(
-      "Hello! I want to register as an admin on ShopNaija. I'm interested in the ₦60,000 annual plan with the 20% 3D discount. Please help me set up my store with the following details: Name, Phone, Email, NIN, Account Name, Account Number, Bank Name, Website Name, and Subdomain."
+      "Hello! I want to register as an admin on ShopNaija. I'm interested in the ₦60,000 annual plan with the 20% discount. Please help me set up my store with the following details: Name, Phone, Email, NIN, Account Name, Account Number, Bank Name, Website Name, and Subdomain."
     );
     window.open(`https://wa.me/+2348158025887?text=${whatsappMessage}`, '_blank');
   };
@@ -22,7 +22,7 @@ const Navbar = () => {
     window.open('https://x.com/Caleb0533', '_blank');
   };
 
-  const handle3DDiscount = () => {
+  const handleDiscountInfo = () => {
     toast({
       title: "🎉 Special Discount - 20% OFF!",
       description: "Get 20% off your annual subscription! This exclusive offer brings your cost down to ₦60,000/year (was ₦75,000). Contact us on WhatsApp to claim this limited-time discount and save ₦15,000!",
@@ -53,12 +53,12 @@ const Navbar = () => {
                 Follow us on X
               </button>
               
-              {/* 3D Discount Link - Visible to all users */}
+              {/* 20% Discount Link - Visible to all users */}
               <button 
-                onClick={handle3DDiscount}
+                onClick={handleDiscountInfo}
                 className="text-white hover:text-yellow-200 px-3 py-2 text-sm font-bold transition-colors flex items-center gap-1 whitespace-nowrap bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow-md animate-pulse hover:animate-none"
               >
-                🎯 3D 20% Discount!
+                🎯 20% Discount!
               </button>
             </div>
           </div>
@@ -109,12 +109,12 @@ const Navbar = () => {
                 Follow us on X
               </button>
               
-              {/* 3D Discount Link - Mobile - Visible to all users */}
+              {/* 20% Discount Link - Mobile - Visible to all users */}
               <button 
-                onClick={handle3DDiscount}
+                onClick={handleDiscountInfo}
                 className="text-white hover:text-yellow-200 block px-3 py-2 text-base font-bold flex items-center gap-2 w-full text-left bg-gradient-to-r from-red-500 to-red-600 rounded-lg mx-3 animate-pulse"
               >
-                🎯 3D 20% Discount!
+                🎯 20% Discount!
               </button>
               
               <div className="px-3 py-2 space-y-3">
