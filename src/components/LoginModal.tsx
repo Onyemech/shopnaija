@@ -38,16 +38,13 @@ const LoginModal = ({ children }: LoginModalProps) => {
       const user = await AuthService.getCurrentUser();
       
       if (user && (user.role === 'admin' || user.role === 'superadmin')) {
-        // Close modal first
         setOpen(false);
         
-        // Show success message
         toast({
           title: "Login successful",
           description: `Welcome ${user.name}! Redirecting...`,
         });
 
-        // Redirect based on role
         setTimeout(() => {
           if (user.role === 'superadmin') {
             navigate("/dashboard");
@@ -105,37 +102,37 @@ const LoginModal = ({ children }: LoginModalProps) => {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <Card className="border-0 shadow-none">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="text-2xl font-bold text-gray-900">
+          <CardHeader className="text-center pb-3">
+            <CardTitle className="text-xl font-bold text-gray-900">
               Login
             </CardTitle>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm">
               Access your dashboard
             </p>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4">
             {/* Social Login Buttons */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-12 text-base border-gray-300 hover:bg-gray-50"
+                className="w-full h-10 text-sm border-gray-300 hover:bg-gray-50"
                 onClick={() => handleSocialLogin('google')}
                 disabled={loading}
               >
-                <Mail className="mr-2 h-5 w-5" />
+                <Mail className="mr-2 h-4 w-4" />
                 Continue with Google
               </Button>
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-12 text-base border-gray-300 hover:bg-gray-50"
+                className="w-full h-10 text-sm border-gray-300 hover:bg-gray-50"
                 onClick={() => handleSocialLogin('github')}
                 disabled={loading}
               >
-                <Github className="mr-2 h-5 w-5" />
+                <Github className="mr-2 h-4 w-4" />
                 Continue with GitHub
               </Button>
             </div>
@@ -150,8 +147,8 @@ const LoginModal = ({ children }: LoginModalProps) => {
             </div>
 
             {/* Email/Phone Login Form */}
-            <form onSubmit={handleAdminLogin} className="space-y-6">
-              <div className="space-y-2">
+            <form onSubmit={handleAdminLogin} className="space-y-4">
+              <div className="space-y-1">
                 <Label htmlFor="emailOrPhone" className="text-sm font-medium text-gray-700">
                   Email or Phone Number
                 </Label>
@@ -162,10 +159,10 @@ const LoginModal = ({ children }: LoginModalProps) => {
                   value={emailOrPhone}
                   onChange={(e) => setEmailOrPhone(e.target.value)}
                   required
-                  className="h-12 text-base border-gray-300 focus:border-green-600 focus:ring-green-600"
+                  className="h-10 text-sm border-gray-300 focus:border-green-600 focus:ring-green-600"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="password" className="text-sm font-medium text-gray-700">
                   Password
                 </Label>
@@ -176,13 +173,13 @@ const LoginModal = ({ children }: LoginModalProps) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-12 text-base border-gray-300 focus:border-green-600 focus:ring-green-600"
+                  className="h-10 text-sm border-gray-300 focus:border-green-600 focus:ring-green-600"
                 />
               </div>
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 text-white font-semibold text-base rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                className="w-full h-10 text-white font-semibold text-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                 style={{ backgroundColor: '#00A862' }}
               >
                 {loading ? (
@@ -196,7 +193,7 @@ const LoginModal = ({ children }: LoginModalProps) => {
               </Button>
             </form>
             
-            <div className="mt-6 text-center">
+            <div className="mt-4 text-center">
               <button 
                 onClick={handleForgotPassword}
                 className="text-sm font-medium hover:underline"
@@ -207,8 +204,8 @@ const LoginModal = ({ children }: LoginModalProps) => {
             </div>
 
             {/* Info for new admins */}
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm text-blue-800 text-center">
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-xs text-blue-800 text-center">
                 <strong>New Admin?</strong> Only superadmins can register new admin accounts. 
                 Contact support if you need an admin account created.
               </p>
