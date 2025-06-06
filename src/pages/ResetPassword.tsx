@@ -11,27 +11,28 @@ const ResetPassword = () => {
   const [isValidLink, setIsValidLink] = useState(false);
 
   useEffect(() => {
-    // Check if we have the required tokens from URL hash or query params
+    // Check for tokens in both URL hash and query params
     const hash = window.location.hash;
-    const accessToken = searchParams.get('access_token') || 
-                       new URLSearchParams(hash.substring(1)).get('access_token');
-    const refreshToken = searchParams.get('refresh_token') || 
-                        new URLSearchParams(hash.substring(1)).get('refresh_token');
-    const type = searchParams.get('type') || 
-                new URLSearchParams(hash.substring(1)).get('type');
+    const hashParams = new URLSearchParams(hash.substring(1));
     
-    console.log('Reset password tokens:', { accessToken, refreshToken, type });
+    const accessToken = searchParams.get('access_token') || hashParams.get('access_token');
+    const refreshToken = searchParams.get('refresh_token') || hashParams.get('refresh_token');
+    const type = searchParams.get('type') || hashParams.get('type');
     
-    if (!accessToken || !refreshToken || type !== 'recovery') {
+    console.log('Reset password tokens:', { accessToken: !!accessToken, refreshToken: !!refreshToken, type });
+    
+    if (!accessToken || type !== 'recovery') {
+      console.log('Invalid reset link - missing tokens or wrong type');
       toast({
         title: "Invalid reset link",
         description: "Please request a new password reset email.",
         variant: "destructive",
       });
       setTimeout(() => {
-        navigate("/forgot-password");
+        navigate("/forgot-password", { replace: true });
       }, 3000);
     } else {
+      console.log('Valid reset link found');
       setIsValidLink(true);
     }
   }, [searchParams, navigate, toast]);

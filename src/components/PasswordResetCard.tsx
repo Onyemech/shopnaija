@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AuthService } from "@/services/AuthService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,6 @@ const PasswordResetCard = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -110,7 +109,7 @@ const PasswordResetCard = () => {
               Create New Password
             </CardTitle>
             <CardDescription className="text-gray-600">
-              Enter your new password for GrowthSmallBeez
+              Enter your new password for ShopNaija
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -172,7 +171,7 @@ const PasswordResetCard = () => {
             </form>
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
-                Powered by <span className="font-semibold text-green-600">GrowthSmallBeez</span>
+                Powered by <span className="font-semibold text-green-600">ShopNaija</span>
               </p>
             </div>
           </CardContent>

@@ -12,26 +12,37 @@ interface SubdomainRouterProps {
 const SubdomainRouter = ({ children, adminContent }: SubdomainRouterProps) => {
   const { subdomain, loading } = useAuth();
 
-  // Query to get admin info for this subdomain
+  // Only query for admin data if we have a valid subdomain that's not the main domain
   const { data: adminData, isLoading: adminLoading } = useQuery({
     queryKey: ['admin', subdomain],
-    queryFn: () => subdomain ? AdminService.getAdminBySubdomain(subdomain) : null,
-    enabled: !!subdomain && subdomain !== 'superadmin',
+    queryFn: () => AdminService.getAdminBySubdomain(subdomain!),
+    enabled: !!subdomain && subdomain !== 'superadmin' && subdomain !== 'shopnaija',
   });
 
-  if (loading || adminLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading ShopNaija...</p>
         </div>
       </div>
     );
   }
 
-  // If we have a subdomain but it's not superadmin, check if admin exists and is active
-  if (subdomain && subdomain !== 'superadmin') {
+  // If we have a subdomain that's not superadmin or the main domain
+  if (subdomain && subdomain !== 'superadmin' && subdomain !== 'shopnaija') {
+    if (adminLoading) {
+      return (
+        <div className="flex items-center justify-center h-screen bg-gray-50">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading store...</p>
+          </div>
+        </div>
+      );
+    }
+
     if (!adminData) {
       return (
         <div className="flex items-center justify-center h-screen bg-gray-50">
@@ -56,11 +67,11 @@ const SubdomainRouter = ({ children, adminContent }: SubdomainRouterProps) => {
       );
     }
 
-    // Pass admin data to admin content for branding
+    // Return admin content for valid admin subdomains
     return <>{adminContent}</>;
   }
 
-  // If we have superadmin subdomain or no subdomain, show main content
+  // For main domain (no subdomain, superadmin subdomain, or shopnaija subdomain)
   return <>{children}</>;
 };
 

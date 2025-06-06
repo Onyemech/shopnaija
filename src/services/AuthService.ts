@@ -183,8 +183,11 @@ export class AuthService {
   }
 
   static async resetPassword(email: string, redirectTo?: string) {
+    const baseUrl = window.location.origin;
+    const resetUrl = redirectTo || `${baseUrl}/reset-password`;
+    
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: redirectTo || `${window.location.origin}/reset-password`
+      redirectTo: resetUrl
     });
 
     if (error) throw error;
@@ -230,40 +233,55 @@ export class AuthService {
 
       console.log('Auth user found:', user.email);
 
-      // Get user profile from our users table
-      const { data: profile, error: profileError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
+      // Try to get user profile from our users table with error handling
+      try {
+        const { data: profile, error: profileError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
 
-      if (profileError) {
-        console.error('Error fetching user profile:', profileError);
-        return null;
+        if (profileError) {
+          console.error('Error fetching user profile:', profileError);
+          // If there's an RLS error, try to get the user by email as a fallback
+          if (profileError.code === 'PGRST116' || profileError.message?.includes('policy')) {
+            console.log('RLS policy blocking access, trying email lookup...');
+            const { data: profileByEmail, error: emailError } = await supabase
+              .from('users')
+              .select('*')
+              .eq('email', user.email!)
+              .maybeSingle();
+            
+            if (!emailError && profileByEmail) {
+              console.log('Profile found by email:', profileByEmail.email, profileByEmail.role);
+              return profileByEmail;
+            }
+          }
+        } else if (profile) {
+          console.log('Profile found:', profile.email, profile.role);
+          return profile;
+        }
+      } catch (dbError) {
+        console.error('Database query error:', dbError);
       }
 
-      if (!profile) {
-        console.log('No profile found, creating basic user object');
-        // If no profile exists, create a basic user object from auth data
-        return {
-          id: user.id,
-          email: user.email!,
-          name: user.user_metadata?.name || user.email!,
-          role: user.user_metadata?.role || 'customer',
-          phone: user.phone,
-          subdomain: user.user_metadata?.subdomain,
-          website_name: user.user_metadata?.website_name,
-          primary_color: user.user_metadata?.primary_color || '#00A862',
-          is_active: true,
-          email_verified: user.email_confirmed_at !== null,
-          phone_verified: user.phone_confirmed_at !== null,
-          created_at: user.created_at,
-          updated_at: new Date().toISOString()
-        } as User;
-      }
-
-      console.log('Profile found:', profile.email, profile.role);
-      return profile;
+      console.log('No profile found, creating basic user object from auth metadata');
+      // If no profile exists, create a basic user object from auth data
+      return {
+        id: user.id,
+        email: user.email!,
+        name: user.user_metadata?.name || user.email!,
+        role: user.user_metadata?.role || 'customer',
+        phone: user.phone,
+        subdomain: user.user_metadata?.subdomain,
+        website_name: user.user_metadata?.website_name,
+        primary_color: user.user_metadata?.primary_color || '#00A862',
+        is_active: true,
+        email_verified: user.email_confirmed_at !== null,
+        phone_verified: user.phone_confirmed_at !== null,
+        created_at: user.created_at,
+        updated_at: new Date().toISOString()
+      } as User;
     } catch (error) {
       console.error('Error in getCurrentUser:', error);
       return null;
