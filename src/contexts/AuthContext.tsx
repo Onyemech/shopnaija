@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const hostname = window.location.hostname;
     
     // Local development handling
-    if (hostname === 'localhost') {
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
       const path = window.location.pathname;
       const pathSegments = path.split('/').filter(Boolean);
       if (pathSegments.length > 0 && pathSegments[0] !== '') {
@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    // Production subdomain extraction for .lovable.app and custom domains
+    // Production subdomain extraction
     const parts = hostname.split('.');
     if (parts.length >= 3) {
       setSubdomain(parts[0]);
@@ -86,13 +86,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const cleanup = initializeAuth();
     
-    // Set maximum loading time of 2 seconds
+    // Set maximum loading time of 3 seconds
     const timeoutId = setTimeout(() => {
       if (mounted) {
         console.log('Auth timeout - stopping loading');
         setLoading(false);
       }
-    }, 2000);
+    }, 3000);
 
     return () => {
       mounted = false;
